@@ -1,4 +1,4 @@
-DROP SCHEMA IF EXISTS valorant_tournament;
+DROP SCHEMA IF EXISTS valorant_tournament CASCADE;
 
 CREATE SCHEMA valorant_tournament;
 
