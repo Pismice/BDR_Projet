@@ -85,7 +85,61 @@ CREATE TABLE Tournoi_Equipe(
 DROP TABLE IF EXISTS Match CASCADE;
 CREATE TABLE Match(
 	idTournoi INTEGER NOT NULL,
+	noMatch SMALLSERIAL,
 	game_format GAME_FORMAT,
 	game_date DATE,
-	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id)
+	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id),
+	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch)
+);
+
+DROP TABLE IF EXISTS Manche CASCADE;
+CREATE TABLE Manche(
+	idTournoi INTEGER NOT NULL,
+	noMatch INTEGER NOT NULL,
+	noManche SMALLSERIAL,
+	CONSTRAINT PK_Manche PRIMARY KEY(idTournoi,noMatch,noManche),
+	CONSTRAINT FK_Manche_idTournoi_noMatch FOREIGN KEY (idTournoi,noMatch) REFERENCES Match(idTournoi,noMatch)
+);
+
+DROP TABLE IF EXISTS Round CASCADE;
+CREATE TABLE Round(
+	idTournoi INTEGER NOT NULL,
+	noMatch INTEGER NOT NULL,
+	noManche INTEGER NOT NULL,
+	noRound SMALLSERIAL,
+	CONSTRAINT PK_Round PRIMARY KEY (idTournoi,noMatch,noManche,noRound),
+	CONSTRAINT FK_Round_idTournoi_noMatch_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche)
+);
+
+DROP TABLE IF EXISTS Arme CASCADE;
+CREATE TABLE Arme(
+	id SMALLSERIAL,
+	nom VARCHAR(20),
+	CONSTRAINT PK_Arme PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS Kill CASCADE;
+CREATE TABLE Kill(
+	idTournoi INTEGER NOT NULL,
+	noMatch INTEGER NOT NULL,
+	noManche INTEGER NOT NULL,
+	noRound INTEGER NOT NULL,
+	noKill SMALLSERIAL,
+	idArme INTEGER NOT NULL,
+	CONSTRAINT PK_Kill PRIMARY KEY (idTournoi,noMatch,noManche,noRound,noKill),
+	CONSTRAINT FK_Kill_idTournoi_noMatch_noManche_noRound FOREIGN KEY (idTournoi,noMatch,noManche,noRound) REFERENCES Round(idTournoi,noMatch,noManche,noRound),
+	CONSTRAINT FK_Kill_idArme FOREIGN KEY (idArme) REFERENCES Arme(id)
+);
+
+DROP TABLE IF EXISTS Joueur_Agent_Manche CASCADE;
+CREATE TABLE Joueur_Agent_Manche(
+	idJoueur INTEGER NOT NULL,
+	idTournoi INTEGER NOT NULL,
+	noMatch INTEGER NOT NULL,
+	noManche INTEGER NOT NULL,
+	idAgent INTEGER NOT NULL,
+	CONSTRAINT FK_Joueur_Agent_Manche_idJoueur FOREIGN KEY (idJoueur) REFERENCES Joueur(id),
+	CONSTRAINT FK_Joueur_Agent_Manche_idAgent FOREIGN KEY (idAgent) REFERENCES Agent(id),
+	CONSTRAINT FK_Joueur_Agent_Manche_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche),
+	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche)
 );
