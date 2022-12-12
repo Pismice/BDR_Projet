@@ -1,7 +1,3 @@
-DROP SCHEMA IF EXISTS valorant_tournament CASCADE;
-
-CREATE SCHEMA valorant_tournament;
-
 DROP TYPE IF EXISTS AGENT_TYPE CASCADE;
 CREATE TYPE AGENT_TYPE AS ENUM('Controlleur','Duelliste','Initiateur','Sentinelle');
 
@@ -33,19 +29,6 @@ CREATE TABLE Carte(
 	CONSTRAINT PK_Carte PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS Joueur CASCADE;
-CREATE TABLE Joueur(
-	id SMALLSERIAL,
-	nom varchar(20) not null,
-	prenom varchar(20) not null,
-	pseudonmye varchar(20) not null,
-	age INTEGER not null,
-	salaire DECIMAL not NULL,
-	idPays INTEGER not null,
-	CONSTRAINT PK_Joueur PRIMARY KEY (id),
-	CONSTRAINT FK_Joueur_idPays FOREIGN KEY (idPays) REFERENCES Pays(id)
-);
-
 DROP TABLE IF EXISTS Equipe CASCADE;
 CREATE TABLE Equipe(
 	id SMALLSERIAL,
@@ -55,12 +38,19 @@ CREATE TABLE Equipe(
 	CONSTRAINT PK_Equipe PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS Joueur_Equipe CASCADE;
-CREATE TABLE Joueur_Equipe(
-	idJoueur INTEGER NOT NULL,
-	idEquipe INTEGER NOT NULL,
-	CONSTRAINT FK_Joueur_Equipe_idJoueur FOREIGN KEY (idJoueur) REFERENCES Joueur(id),
-	CONSTRAINT FK_Joueur_Equipe_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id)
+DROP TABLE IF EXISTS Joueur CASCADE;
+CREATE TABLE Joueur(
+	id SMALLSERIAL,
+	nom varchar(20) not null,
+	prenom varchar(20) not null,
+	pseudonmye varchar(20) not null,
+	age INTEGER not null,
+	salaire DECIMAL not NULL,
+	idPays INTEGER not null,
+	idEquipe INTEGER,
+	CONSTRAINT PK_Joueur PRIMARY KEY (id),
+	CONSTRAINT FK_Joueur_idPays FOREIGN KEY (idPays) REFERENCES Pays(id),
+	CONSTRAINT FK_Joueur_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id)
 );
 
 DROP TABLE IF EXISTS Tournoi CASCADE;
