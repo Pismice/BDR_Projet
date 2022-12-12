@@ -97,8 +97,10 @@ CREATE TABLE Manche(
 	idTournoi INTEGER NOT NULL,
 	noMatch INTEGER NOT NULL,
 	noManche SMALLSERIAL,
+	noCarte INTEGER NOT NULL,
 	CONSTRAINT PK_Manche PRIMARY KEY(idTournoi,noMatch,noManche),
-	CONSTRAINT FK_Manche_idTournoi_noMatch FOREIGN KEY (idTournoi,noMatch) REFERENCES Match(idTournoi,noMatch)
+	CONSTRAINT FK_Manche_idTournoi_noMatch FOREIGN KEY (idTournoi,noMatch) REFERENCES Match(idTournoi,noMatch),
+	CONSTRAINT FK_Manche_idCarte FOREIGN KEY (noCarte) REFERENCES Carte(id)
 );
 
 DROP TABLE IF EXISTS Round CASCADE;
