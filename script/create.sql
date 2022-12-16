@@ -7,17 +7,20 @@ CREATE TYPE REGION AS ENUM('EMEA','AMERICAS','PACIFIC');
 DROP TYPE IF EXISTS GAME_FORMAT CASCADE;
 CREATE TYPE GAME_FORMAT AS ENUM ('bo1','bo3','bo5');
 
+DROP DOMAIN IF EXISTS NAME_FORMAT CASCADE;
+CREATE DOMAIN NAME_FORMAT VARCHAR(20) NOT NULL;
+
 DROP TABLE IF EXISTS Pays CASCADE;
 CREATE TABLE Pays(
 	id SMALLSERIAL,
-	nom VARCHAR(25) not null,
+	nom NAME_FORMAT,
 	CONSTRAINT PK_Pays PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS Agent CASCADE;
 CREATE TABLE Agent(
 	id SMALLSERIAL,
-	nom varchar(20) not null,
+	nom NAME_FORMAT,
 	role AGENT_TYPE not null,
 	CONSTRAINT PK_Agent PRIMARY KEY (id)
 );
@@ -25,14 +28,14 @@ CREATE TABLE Agent(
 DROP TABLE IF EXISTS Carte CASCADE;
 CREATE TABLE Carte(
 	id SMALLSERIAL,
-	nom varchar(20) not null,
+	nom NAME_FORMAT,
 	CONSTRAINT PK_Carte PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS Equipe CASCADE;
 CREATE TABLE Equipe(
 	id SMALLSERIAL,
-	nom VARCHAR(20),
+	nom NAME_FORMAT,
 	elo INTEGER,
 	region REGION,
 	CONSTRAINT PK_Equipe PRIMARY KEY (id)
@@ -41,9 +44,9 @@ CREATE TABLE Equipe(
 DROP TABLE IF EXISTS Joueur CASCADE;
 CREATE TABLE Joueur(
 	id SMALLSERIAL,
-	nom varchar(20) not null,
-	prenom varchar(20) not null,
-	pseudonmye varchar(20) not null,
+	nom NAME_FORMAT,
+	prenom NAME_FORMAT,
+	pseudonmye NAME_FORMAT,
 	age INTEGER not null,
 	salaire DECIMAL not NULL,
 	idPays INTEGER not null,
@@ -56,7 +59,7 @@ CREATE TABLE Joueur(
 DROP TABLE IF EXISTS Tournoi CASCADE;
 CREATE TABLE Tournoi(
 	id SMALLSERIAL,
-	nom VARCHAR(20),
+	nom NAME_FORMAT,
 	cashprize DECIMAL,
 	point INTEGER,
 	dateDebut DATE,
@@ -76,10 +79,12 @@ DROP TABLE IF EXISTS Match CASCADE;
 CREATE TABLE Match(
 	idTournoi INTEGER NOT NULL,
 	noMatch SMALLSERIAL,
-	game_format GAME_FORMAT,
-	game_date DATE,
+	gameFormat GAME_FORMAT,
+	gameDate DATE,
+	noMatchSuivant INTEGER,
 	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id),
-	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch)
+	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch),
+	CONSTRAINT FK_Match_noMatchSuivant FOREIGN KEY (idTournoi,noMatchSuivant) REFERENCES Match(idTournoi,noMatch)
 );
 
 DROP TABLE IF EXISTS Manche CASCADE;
@@ -106,7 +111,7 @@ CREATE TABLE Round(
 DROP TABLE IF EXISTS Arme CASCADE;
 CREATE TABLE Arme(
 	id SMALLSERIAL,
-	nom VARCHAR(20),
+	nom NAME_FORMAT,
 	CONSTRAINT PK_Arme PRIMARY KEY (id)
 );
 
