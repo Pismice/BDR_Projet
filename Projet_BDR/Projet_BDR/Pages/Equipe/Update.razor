@@ -1,0 +1,53 @@
+﻿@page "/equipe/update/{id}"
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+<PageTitle>Modification d'une équipe</PageTitle>
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="Nom" class="control-label">Nom</label>
+                <input form="Nom" class="form-control" @bind="@equipe.Nom" />
+            </div>
+            <div class="form-group">
+                <label for="Elo" class="control-label">Elo</label>
+                <input form="Elo" class="form-control" @bind="@equipe.Elo" />
+            </div>
+            <div class="form-group">
+                <label for="Region" class="control-label">Region</label>
+                <input form="Region" class="form-control" @bind="@equipe.Region" />
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdateEquipe" value="Modifier" />
+                <input type="button" class="btn btn-secondary" @onclick="@Cancel" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Equipe equipe = new Equipe();
+
+    protected override void OnInitialized()
+    {
+        this.equipe = EquipeService.GetById(Int16.Parse(id));
+    }
+    protected void UpdateEquipe()
+    {
+        EquipeService.Update(equipe);
+        NavigationManager.NavigateTo("equipe");
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("equipe");
+    }
+}
+

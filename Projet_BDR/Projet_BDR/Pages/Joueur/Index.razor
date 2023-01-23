@@ -1,0 +1,49 @@
+﻿@page "/joueur"
+@inject JoueurService JoueurService
+@inject EquipeService EquipeService
+@inject PaysService PaysService
+<h3>Listes des joueurs 
+    <a class="btn btn-primary" href="joueur/add">
+        Ajouter un joueur
+    </a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Pseudonyme</th>
+            <th>Date de naissance</th>
+            <th>Salaire</th>
+            <th>Pays</th>
+            <th>Equipe</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(Joueur j in joueurs)
+        {
+            <tr>
+                <td>@j.Nom</td>
+                <td>@j.Prenom</td>
+                <td>@j.Pseudonyme</td>
+                <td>@j.DateNaissance</td>
+                <td>@j.Salaire</td>
+                <td>@PaysService.GetName(j.IdPays)</td>
+                <td>@EquipeService.GetName(j.IdEquipe)</td>
+                <td><a class="btn btn-danger" href="joueur/delete/@j.Id">Suppr.</a></td>
+                <td><a class="btn btn-danger" href="joueur/update/@j.Id">Modif.</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    Joueur[]? joueurs;
+    protected override void OnInitialized()
+    {
+        joueurs = JoueurService.GetAll();
+
+    }
+}

@@ -1,0 +1,44 @@
+﻿@page "/equipe"
+@inject EquipeService EquipeService
+<h3>Listes des équipes 
+    <a class="btn btn-primary" href="équipe/add">
+        Ajouter une équipe
+    </a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom équipe</th>
+            <th>Élo</th>
+            <th>Région</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(Equipe e in equipes)
+        {
+            <tr>
+                <td>@e.Nom</td>
+                <td>@e.Elo</td>
+                <td>@e.Region</td>
+                <td><a class="btn btn-danger" @onclick="@DeleteEquipe(e.Id)">Suppr.</a></td>
+                <td><a class="btn btn-light" href="equipe/update/@e.Id">Modif.</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    Equipe[]? equipes;
+    protected override void OnInitialized()
+    {
+        equipes = EquipeService.GetAll();
+    }
+
+    protected EventCallback DeleteEquipe(Int16 id)
+    {
+
+        return new EventCallback();
+    }
+}

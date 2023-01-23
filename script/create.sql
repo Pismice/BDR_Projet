@@ -36,7 +36,7 @@ DROP TABLE IF EXISTS Equipe CASCADE;
 CREATE TABLE Equipe(
 	id SMALLSERIAL,
 	nom NAME_FORMAT,
-	elo INTEGER,
+	elo SMALLINT,
 	region REGION,
 	CONSTRAINT PK_Equipe PRIMARY KEY (id)
 );
@@ -46,11 +46,11 @@ CREATE TABLE Joueur(
 	id SMALLSERIAL,
 	nom NAME_FORMAT,
 	prenom NAME_FORMAT,
-	pseudonmye NAME_FORMAT,
-	age INTEGER not null,
-	salaire DECIMAL not NULL,
-	idPays INTEGER not null,
-	idEquipe INTEGER,
+	pseudonyme NAME_FORMAT,
+	dateNaissance DATE not null ,
+	salaire SMALLINT not NULL,
+	idPays SMALLINT not null,
+	idEquipe SMALLINT,
 	CONSTRAINT PK_Joueur PRIMARY KEY (id),
 	CONSTRAINT FK_Joueur_idPays FOREIGN KEY (idPays) REFERENCES Pays(id),
 	CONSTRAINT FK_Joueur_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id)
@@ -61,7 +61,7 @@ CREATE TABLE Tournoi(
 	id SMALLSERIAL,
 	nom NAME_FORMAT,
 	cashprize DECIMAL,
-	point INTEGER,
+	point SMALLINT,
 	dateDebut DATE,
 	dateFin DATE,
 	CONSTRAINT PK_Tournoi PRIMARY KEY (id)
@@ -69,19 +69,19 @@ CREATE TABLE Tournoi(
 
 DROP TABLE IF EXISTS Tournoi_Equipe CASCADE;
 CREATE TABLE Tournoi_Equipe(
-	idTournoi INTEGER NOT NULL,
-	idEquipe INTEGER NOT NULL,
+	idTournoi SMALLINT NOT NULL,
+	idEquipe SMALLINT NOT NULL,
 	CONSTRAINT FK_Tournoi_Equipe_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id),
 	CONSTRAINT FK_Tournoi_Equipe_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id)
 );
 
 DROP TABLE IF EXISTS Match CASCADE;
 CREATE TABLE Match(
-	idTournoi INTEGER NOT NULL,
+	idTournoi SMALLINT NOT NULL,
 	noMatch SMALLSERIAL,
 	gameFormat GAME_FORMAT,
 	gameDate DATE,
-	noMatchSuivant INTEGER,
+	noMatchSuivant SMALLINT,
 	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id),
 	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch),
 	CONSTRAINT FK_Match_noMatchSuivant FOREIGN KEY (idTournoi,noMatchSuivant) REFERENCES Match(idTournoi,noMatch)
@@ -89,10 +89,10 @@ CREATE TABLE Match(
 
 DROP TABLE IF EXISTS Manche CASCADE;
 CREATE TABLE Manche(
-	idTournoi INTEGER NOT NULL,
-	noMatch INTEGER NOT NULL,
+	idTournoi SMALLINT NOT NULL,
+	noMatch SMALLINT NOT NULL,
 	noManche SMALLSERIAL,
-	noCarte INTEGER NOT NULL,
+	noCarte SMALLINT NOT NULL,
 	CONSTRAINT PK_Manche PRIMARY KEY(idTournoi,noMatch,noManche),
 	CONSTRAINT FK_Manche_idTournoi_noMatch FOREIGN KEY (idTournoi,noMatch) REFERENCES Match(idTournoi,noMatch),
 	CONSTRAINT FK_Manche_idCarte FOREIGN KEY (noCarte) REFERENCES Carte(id)
@@ -100,9 +100,9 @@ CREATE TABLE Manche(
 
 DROP TABLE IF EXISTS Round CASCADE;
 CREATE TABLE Round(
-	idTournoi INTEGER NOT NULL,
-	noMatch INTEGER NOT NULL,
-	noManche INTEGER NOT NULL,
+	idTournoi SMALLINT NOT NULL,
+	noMatch SMALLINT NOT NULL,
+	noManche SMALLINT NOT NULL,
 	noRound SMALLSERIAL,
 	CONSTRAINT PK_Round PRIMARY KEY (idTournoi,noMatch,noManche,noRound),
 	CONSTRAINT FK_Round_idTournoi_noMatch_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche)
@@ -117,12 +117,12 @@ CREATE TABLE Arme(
 
 DROP TABLE IF EXISTS Kill CASCADE;
 CREATE TABLE Kill(
-	idTournoi INTEGER NOT NULL,
-	noMatch INTEGER NOT NULL,
-	noManche INTEGER NOT NULL,
-	noRound INTEGER NOT NULL,
+	idTournoi SMALLINT NOT NULL,
+	noMatch SMALLINT NOT NULL,
+	noManche SMALLINT NOT NULL,
+	noRound SMALLINT NOT NULL,
 	noKill SMALLSERIAL,
-	idArme INTEGER NOT NULL,
+	idArme SMALLINT NOT NULL,
 	CONSTRAINT PK_Kill PRIMARY KEY (idTournoi,noMatch,noManche,noRound,noKill),
 	CONSTRAINT FK_Kill_idTournoi_noMatch_noManche_noRound FOREIGN KEY (idTournoi,noMatch,noManche,noRound) REFERENCES Round(idTournoi,noMatch,noManche,noRound),
 	CONSTRAINT FK_Kill_idArme FOREIGN KEY (idArme) REFERENCES Arme(id)
@@ -130,11 +130,11 @@ CREATE TABLE Kill(
 
 DROP TABLE IF EXISTS Joueur_Agent_Manche CASCADE;
 CREATE TABLE Joueur_Agent_Manche(
-	idJoueur INTEGER NOT NULL,
-	idTournoi INTEGER NOT NULL,
-	noMatch INTEGER NOT NULL,
-	noManche INTEGER NOT NULL,
-	idAgent INTEGER NOT NULL,
+	idJoueur SMALLINT NOT NULL,
+	idTournoi SMALLINT NOT NULL,
+	noMatch SMALLINT NOT NULL,
+	noManche SMALLINT NOT NULL,
+	idAgent SMALLINT NOT NULL,
 	CONSTRAINT FK_Joueur_Agent_Manche_idJoueur FOREIGN KEY (idJoueur) REFERENCES Joueur(id),
 	CONSTRAINT FK_Joueur_Agent_Manche_idAgent FOREIGN KEY (idAgent) REFERENCES Agent(id),
 	CONSTRAINT FK_Joueur_Agent_Manche_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche),

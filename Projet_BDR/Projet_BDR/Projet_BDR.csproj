@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+	<Folder Include="Pages\Agent\" />
+	<Folder Include="Pages\Arme\" />
+	<Folder Include="Pages\Carte\" />
+	<Folder Include="Pages\Manche\" />
+	<Folder Include="Pages\Match\" />
+	<Folder Include="Pages\Round\" />
+	<Folder Include="Pages\Tournoi\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.1" />
+  </ItemGroup>
+
+</Project>
