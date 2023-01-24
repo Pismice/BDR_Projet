@@ -11,22 +11,22 @@ namespace Projet_BDR.Service
         {
             _context = context;
         }
-        public Equipe[] GetAll()
+        public Equipe[]? GetAll()
         {
             return _context.Equipe.FromSqlRaw("SELECT * FROM equipe ORDER BY id").ToArray();
         }
 
-        public Equipe GetById(Int16 id)
+        public Equipe? GetById(Int16 id)
         {
             FormattableString query = $"SELECT * FROM equipe WHERE id = {@id}";
             return _context.Equipe.FromSqlInterpolated(query).ToArray()[0];
         }
-        public Joueur[] GetJoueurs(Int16 id)
+        public Joueur[]? GetJoueurs(Int16 id)
         {
             FormattableString query = $"SELECT * FROM joueur where idequipe = {@id}";
             return _context.Joueur.FromSqlInterpolated(query).ToArray();
         }
-        public string GetName(Int16 id)
+        public string? GetName(Int16 id)
         {
             FormattableString query = $"SELECT * FROM equipe WHERE id = {id}";
             return _context.Equipe.FromSqlInterpolated(query).ToArray()[0].Nom;

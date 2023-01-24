@@ -20,6 +20,6 @@ namespace Projet_BDR.Data
         [ForeignKey("Pays")]
         public Int16 IdPays { get; set; }
         [ForeignKey("Equipe")]
-        public Int16 IdEquipe { get; set; }
+        public Int16? IdEquipe { get; set; }
     }
 }

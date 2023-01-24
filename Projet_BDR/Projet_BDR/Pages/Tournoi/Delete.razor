@@ -1,0 +1,35 @@
+﻿@page "/tournoi/delete/{id}"
+@inject TournoiService TournoiService
+@inject NavigationManager NavigationManager
+<PageTitle>Suppréssion de tournoi</PageTitle>
+<form>
+    <h3 class="control-label">Êtes-vous sûre de vouloir supprimer le tournoi @tournoi.Nom?</h3>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Accept" value="Oui" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Tournoi tournoi;
+    protected override void OnInitialized()
+    {
+        tournoi = TournoiService.GetById(Int16.Parse(id));
+    }
+    protected void Accept()
+    {
+        TournoiService.Delete(Int16.Parse(id));
+        End();
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("");
+    }
+}

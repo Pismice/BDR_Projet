@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ValoContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Connection")));
 builder.Services.AddServerSideBlazor();
+builder.Services.AddScoped<TournoiService>();
 builder.Services.AddScoped<EquipeService>();
 builder.Services.AddScoped<JoueurService>();
 builder.Services.AddScoped<PaysService>();

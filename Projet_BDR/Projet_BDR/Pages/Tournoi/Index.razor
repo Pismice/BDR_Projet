@@ -1,0 +1,47 @@
+﻿@page "/"
+@inject TournoiService TournoiService
+
+<h3>
+    Listes des tournois
+    <a class="btn btn-primary" href="tournoi/add">
+        <span class="oi oi-plus"></span>
+    </a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Cashprize</th>
+            <th>Point</th>
+            <th>Date de début</th>
+            <th>Date de fin</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach(Tournoi t in tournois)
+            {
+                <tr>
+                    <td>@t.Nom</td>
+                    <td>@t.CashPrize</td>
+                    <td>@t.Point</td>
+                    <td>@t.DateDebut</td>
+                    <td>@t.DateFin</td>
+                    <td>
+                        <a class="btn btn-light" href="tournoi/@t.Id"><span class="oi oi-magnifying-glass"></span></a>
+                        <a class="btn btn-light" href="tournoi/update/@t.Id"><span class="oi oi-pencil"></span></a>
+                        <a class="btn btn-danger" href="tournoi/delete/@t.Id"><span class="oi oi-delete"></span></a>
+                    </td>
+                </tr>
+            }
+    </tbody>
+</table>
+
+
+@code {
+    Tournoi[]? tournois;
+    protected override void OnInitialized()
+    {
+        tournois = TournoiService.GetAll();
+    }
+}

@@ -1,0 +1,59 @@
+﻿@page "/tournoi/update/{id}"
+@inject TournoiService TournoiService
+@inject NavigationManager NavigationManager
+<PageTitle>Ajouter un nouveau tournoi</PageTitle>
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="col-md-8">
+                <label for="Nom" class="control-label">Nom</label>
+                <input form="Nom" class="form-control" @bind="@tournoi.Nom" />
+            </div>
+            <div class="col-md-8">
+                <label for="Cashprize" class="control-label">Cashprize</label>
+                <input form="Cashprize" class="form-control" @bind="@tournoi.CashPrize" />
+            </div>
+            <div class="col-md-8">
+                <label for="Point" class="control-label">Point</label>
+                <input form="Point" class="form-control" @bind="@tournoi.Point" />
+            </div>
+            <div class="col-md-8">
+                <label for="DateDebut" class="control-label">Date de début</label>
+                <input form="DateDebut" class="form-control" @bind="@tournoi.DateDebut" />
+            </div>
+            <div class="col-md-8">
+                <label for="DateFin" class="control-label">Date de fin</label>
+                <input form="DateFin" class="form-control" @bind="@tournoi.DateFin" />
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@UpdateTournoi" value="Modifier" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    Tournoi tournoi = new Tournoi();
+    protected override void OnInitialized()
+    {
+        tournoi = TournoiService.GetById(Int16.Parse(id));
+    }
+
+    protected void UpdateTournoi()
+    {
+        TournoiService.Update(tournoi);
+        End();
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("");
+    }
+}

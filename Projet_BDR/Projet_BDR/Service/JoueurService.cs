@@ -24,7 +24,16 @@ namespace Projet_BDR.Service
 
         public void Add(Joueur j)
         {
-            FormattableString query = $"INSERT INTO joueur (nom,prenom,pseudonyme,dateNaissance,salaire,idPays,idEquipe) VALUES ({@j.Nom},{@j.Prenom},{@j.Pseudonyme},{@j.DateNaissance},{@j.Salaire},{@j.IdPays},{@j.IdEquipe})";
+            FormattableString query;
+            if(j.IdEquipe == 0) 
+            {
+                query = $"INSERT INTO joueur (nom,prenom,pseudonyme,dateNaissance,salaire,idPays) VALUES ({@j.Nom},{@j.Prenom},{@j.Pseudonyme},{@j.DateNaissance},{@j.Salaire},{@j.IdPays})";
+            }
+            else
+            {
+                query = $"INSERT INTO joueur (nom,prenom,pseudonyme,dateNaissance,salaire,idPays,idEquipe) VALUES ({@j.Nom},{@j.Prenom},{@j.Pseudonyme},{@j.DateNaissance},{@j.Salaire},{@j.IdPays},{j.IdEquipe})";
+            }
+             
             _context.Database.ExecuteSqlInterpolated(query);
         }
         public void Update(Joueur j)

@@ -40,10 +40,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXFVwZGF0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Index.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEFkZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -58,6 +54,30 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Update.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXFVwZGF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Add.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxBZGQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxEZWxldGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxJbnNwZWN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Update.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxVcGRhdGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/UpdateEquipe.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxVcGRhdGVFcXVpcGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/_Imports.razor]

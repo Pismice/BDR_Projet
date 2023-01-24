@@ -1,0 +1,58 @@
+﻿@page "/tournoi/{id}"
+@inject EquipeService EquipeService
+@inject PaysService PaysService
+@inject TournoiService TournoiService
+@inject NavigationManager NavigationManager
+
+<h3>Information du tournoi @tournoi.Nom</h3>
+<h4>Liste des équipes 
+    <a class="btn btn-primary" href="tournoi/@tournoi.Id/add_equipe">
+        Ajouter une équipe au tournoi
+    </a>
+</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom équipe</th>
+            <th>Élo</th>
+            <th>Région</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Equipe e in equipes)
+        {
+            <tr>
+                <td>@e.Nom</td>
+                <td>@e.Elo</td>
+                <td>@e.Region</td>
+                <td>
+                    <a class="btn btn-light" href="equipe/@e.Id"><span class="oi oi-magnifying-glass"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Tournoi tournoi;
+    Equipe[] equipes;
+    protected override void OnInitialized()
+    {
+        tournoi = TournoiService.GetById(Int16.Parse(id));
+        equipes = TournoiService.GetEquipeFromTournoi(Int16.Parse(id));
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("");
+    }
+}

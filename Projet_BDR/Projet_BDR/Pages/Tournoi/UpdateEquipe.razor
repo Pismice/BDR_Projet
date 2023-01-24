@@ -1,0 +1,88 @@
+﻿@page "/tournoi/{id}/add_equipe"
+@inject TournoiService TournoiService
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+<PageTitle>Ajouter un nouveau tournoi</PageTitle>
+<form>
+    <fieldset>
+        <legend>Faites le choix des équipes</legend>
+        <div class="row">
+            <div class="col-md-8">
+                @foreach (Equipe equipe in equipes_all)
+                {
+                    <div class="col-md-8">
+                    @if (equipes_tournoi.Contains(equipe)){
+                        <input form="@equipe.Id" type="checkbox" @onclick=@((e) => EquipeClickEvent(equipe,e)) name="equipe" value="@equipe.Nom" checked/>
+                    } 
+                    else
+                    {
+                        <input form="@equipe.Id" type="checkbox" @onclick=@((e) => EquipeClickEvent(equipe,e)) name="equipe" value="@equipe.Nom" />
+                    }
+                        <label for="@equipe.Id">@equipe.Nom</label>
+                    </div>                                        
+                }
+            </div>
+        </div>
+    </fieldset>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Update" value="Modifier" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string id { get; set; }
+
+    Tournoi tournoi = new Tournoi();
+    List<Equipe> equipes_tournoi;
+    List<Equipe> equipes_initial_tournoi;
+    Equipe[] equipes_all;
+
+    protected override void OnInitialized()
+    {
+        tournoi = TournoiService.GetById(Int16.Parse(id));
+        equipes_all = EquipeService.GetAll();
+        equipes_initial_tournoi = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).ToList();
+        equipes_tournoi = equipes_initial_tournoi.ToList();
+    }
+
+    public void EquipeClickEvent(Equipe equipe, MouseEventArgs evnt)
+    {
+        if (equipes_tournoi.Contains(equipe))
+        {
+            equipes_tournoi.Remove(equipe);
+        }
+        else
+        {
+            equipes_tournoi.Add(equipe);                
+        }
+    }
+
+    protected void Update()
+    {
+        foreach (Equipe e in equipes_initial_tournoi)
+        {
+            if (!equipes_tournoi.Contains(e))
+            {
+                TournoiService.DeleteEquipe(tournoi, e);
+            }
+        }
+        foreach (Equipe e in equipes_tournoi)
+        {
+            if (!equipes_initial_tournoi.Contains(e))
+            {
+                TournoiService.AddEquipe(tournoi, e);
+            }
+        }
+        End();
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("tournoi/"+id);
+    }
+}

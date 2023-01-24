@@ -18,8 +18,8 @@ namespace Projet_BDR.Data
         [Required]
         public Int16 Point { get; set; }
         [Required]
-        public DateTime DateDebut { get; set; }
+        public DateOnly DateDebut { get; set; }
         [Required]
-        public DateTime DateFin { get; set; }
+        public DateOnly DateFin { get; set; }
     }
 }

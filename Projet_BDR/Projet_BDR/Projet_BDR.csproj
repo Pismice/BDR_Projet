@@ -14,7 +14,6 @@
 	<Folder Include="Pages\Manche\" />
 	<Folder Include="Pages\Match\" />
 	<Folder Include="Pages\Round\" />
-	<Folder Include="Pages\Tournoi\" />
   </ItemGroup>
 
   <ItemGroup>
