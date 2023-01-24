@@ -168,22 +168,32 @@ INNER JOIN match on (match.idTournoi,match.noMatch) = (round.idTournoi, round.no
 INNER JOIN kill on (round.idTournoi, round.noMatch, round.noManche, round.noRound) = (kill.idTournoi, kill.noMatch, kill.noManche, kill.noRound)
 INNER JOIN joueur on kill.idTueur = joueur.id
 INNER JOIN equipe on joueur.idEquipe = equipe.id
-WHERE match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id
 GROUP BY round.idtournoi, round.nomatch, round.nomanche, equipe.id
-HAVING count(kill.idMort) = 5;
-
-
+HAVING count(*) = 5;
 
 DROP VIEW IF EXISTS vMancheFini;
 CREATE VIEW vMancheFini AS
-SELECT idTournoi, noMatch, noManche, idEquipe idVainqueur
-FROM Manche;
+SELECT manche.idTournoi, manche.noMatch, manche.noManche, vRoundFini.idVainqueur idVainqueur
+FROM manche 
+INNER JOIN match on (match.idTournoi,match.noMatch) = (manche.idTournoi, manche.noMatch)
+INNER JOIN vRoundFini on (manche.idTournoi, manche.noMatch, manche.noManche) = (vRoundFini.idTournoi, vRoundFini.noMatch, vRoundFini.noManche)
+GROUP BY manche.idTournoi, manche.noMatch, manche.noManche, vRoundFini.idVainqueur
+HAVING count(*) = 13;
 
 DROP VIEW IF EXISTS vMatchFini;
 CREATE VIEW vMatchFini AS
-SELECT * FROM Match;
+SELECT match.idTournoi, match.noMatch, vMancheFini.idVainqueur idVainqueur
+FROM Match
+INNER JOIN vMancheFini ON (match.idTournoi, match.noMatch) = (vMancheFini.idTournoi, vMancheFini.noMatch)
+GROUP BY match.idTournoi, match.noMatch, vMancheFini.idVainqueur
+HAVING count(*) = 
+CASE
+WHEN match.gameFormat = 'bo1' THEN 1
+WHEN match.gameFormat = 'bo3' THEN 2
+WHEN match.gameFormat = 'bo5' THEN 3
+END;
 
-
+-- fonction triggers pour manche
 CREATE OR REPLACE FUNCTION checkNumberManche() RETURNS TRIGGER AS 
 $BODY$
 LANGUAGE plpgsql
@@ -213,7 +223,7 @@ CREATE OR REPLACE FUNCTION checkSameCarte() RETURNS VOID
 AS $BODY$
 LANGUAGE plpgsql;
 DECLARE 
-	count integer;
+	count_carte integer;
 BEGIN 
 	SELECT count(noManche) FROM manche
 	WHERE (idTournoi, noMatch) = (new.idTournoi, new.noMatch) AND idCarte = new.idCarte
@@ -225,6 +235,7 @@ BEGIN
 END;
 $BODY$
 
+-- fonction qui regroupe les triggers de manche
 CREATE OR REPLACE FUNCTION triggersAfterManche() RETURNS VOID 
 AS $BODY$
 LANGUAGE plpgsql;
@@ -234,11 +245,11 @@ BEGIN
 END;
 $BODY$
 
-
+-- trigger de manche
 CREATE OR REPLACE TRIGGER afterInsertManche AFTER INSERT OF Manche 
 FOR EACH ROW
 EXECUTE PROCEDURE triggersAfterManche();
-
+-- fonction trigger de match
 CREATE OR REPLACE FUNCTION checkMatchDate() RETURNS TRIGGER AS
 $BODY$
 DECLARE 
@@ -257,6 +268,7 @@ BEGIN
 	RETURN NULL;
 END;
 
+-- fonction qui lance toute les fonctions trigger
 CREATE OR REPLACE FUNCTION triggersAfterMatch() RETURNS VOID 
 AS $BODY$
 LANGUAGE plpgsql;
@@ -266,11 +278,13 @@ BEGIN
 END;
 $BODY$
 
-CREATE OR REPLACE TRIGGER beforeInsertMatch AFTER INSERT OF match
+
+-- trigger de match
+CREATE OR REPLACE TRIGGER afterInsertMatch AFTER INSERT OF match
 FOR EACH ROW
 EXECUTE PROCEDURE triggersAfterMatch();
 
-
+-- fonction trigger de kill
 CREATE OR REPLACE FUNCTION checkKillSameTeam() RETURNS TRIGGER AS
 $BODY$
 LANGUAGE plpgsql;
@@ -297,6 +311,7 @@ BEGIN
 	RETURN NULL;
 END;
 
+-- fonction qui lance les fonctions trigger
 CREATE OR REPLACE triggersAfterAddKill() RETURNS VOID
 AS $BODY$
 LANGUAGE plpgsql;
@@ -305,8 +320,7 @@ BEGIN
 	PERFORM checkJoueurNotKilledTwice();
 END;
 $BODY$
-
+-- trigger de kill
 CREATE OR REPLACE TRIGGER afterAddKill AFTER INSERT OF Kill
 FOR EACH ROW 
 EXECUTE PROCEDURE triggersAfterAddKill();
-
