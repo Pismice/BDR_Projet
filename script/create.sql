@@ -86,6 +86,8 @@ CREATE TABLE Match(
 	gameFormat GAME_FORMAT,
 	gameDate DATE,
 	noMatchSuivant SMALLINT,
+	idEquipeGauche SMALLINT,
+	idEquipeDroite SMALLINT,
 	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch),
 	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id) ON DELETE CASCADE,
 	CONSTRAINT FK_Match_noMatchSuivant FOREIGN KEY (idTournoi,noMatchSuivant) REFERENCES Match(idTournoi,noMatch) ON DELETE CASCADE,
@@ -127,10 +129,15 @@ CREATE TABLE Kill(
 	noManche SMALLINT NOT NULL,
 	noRound SMALLINT NOT NULL,
 	noKill SMALLSERIAL,
+	idTueur SMALLINT NOT NULL,
+	idMort SMALLINT NOT NULL,
 	idArme SMALLINT NOT NULL,
 	CONSTRAINT PK_Kill PRIMARY KEY (idTournoi,noMatch,noManche,noRound,noKill),
 	CONSTRAINT FK_Kill_idTournoi_noMatch_noManche_noRound FOREIGN KEY (idTournoi,noMatch,noManche,noRound) REFERENCES Round(idTournoi,noMatch,noManche,noRound) ON DELETE CASCADE,
-	CONSTRAINT FK_Kill_idArme FOREIGN KEY (idArme) REFERENCES Arme(id) ON DELETE CASCADE
+	CONSTRAINT FK_Kill_idArme FOREIGN KEY (idArme) REFERENCES Arme(id) ON DELETE CASCADE,
+	CONSTRAINT FK_Kill_idTueur FOREIGN KEY (idTueur) REFERENCES Joueur(id) ON DELETE CASCADE,
+	CONSTRAINT FK_Kill_idMort FOREIGN KEY (idMort) REFERENCES Joueur(id) ON DELETE CASCADE,
+	CONSTRAINT idtueur_idmort_check CHECK(idTueur <> idMort)
 );
 
 DROP TABLE IF EXISTS Joueur_Agent_Manche CASCADE;
@@ -146,10 +153,38 @@ CREATE TABLE Joueur_Agent_Manche(
 	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche,idAgent)
 );
 
-
 DROP VIEW IF EXISTS vEquipeActive;
 CREATE VIEW vEquipeActive AS 
 SELECT equipe.* FROM equipe 
 INNER JOIN joueur ON equipe.id = joueur.idEquipe
 GROUP BY equipe.id
-HAVING count(joueur.id) == 5;
+HAVING count(joueur.id) = 5;
+
+CREATE OR REPLACE FUNCTION checkManche() RETURNS TRIGGER AS 
+$BODY$
+LANGUAGE plpgsql
+DECLARE 
+	bo integer;
+	count integer;
+	gameFormat GAME_FORMAT;
+BEGIN
+	SELECT gameFormat FROM Match
+	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
+	INTO gameFormat;
+	CASE 
+		WHEN gameFormat = bo1 THEN bo = 1
+		WHEN gameFormat = bo3 THEN bo = 3
+		WHEN gameFormat = bo5 THEN bo = 5
+	END;
+	SELECT COUNT(noManche) FROM Manche
+	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
+	INTO count;
+	IF (count > bo) THEN 
+		raise exception 'Il y a trop de manche pour ce match!';
+	END IF;
+	RETURN NEW;
+END;
+
+CREATE TRIGGER addManche AFTER INSERT OF Manche 
+FOR EACH ROW
+EXECUTE PROCEDURE checkManche();

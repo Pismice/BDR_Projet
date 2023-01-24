@@ -23,6 +23,7 @@ namespace Projet_BDR.Context
         {
             NpgsqlConnection.GlobalTypeMapper.MapEnum<Region>();
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AgentType>();
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<GameFormat>();
         }
 
     }
