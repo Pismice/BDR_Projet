@@ -1,7 +1,8 @@
 ﻿@page "/equipe"
 @inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
 <h3>Listes des équipes 
-    <a class="btn btn-primary" href="équipe/add">
+    <a class="btn btn-primary" href="equipe/add">
         Ajouter une équipe
     </a>
 </h3>
@@ -12,7 +13,6 @@
             <th>Élo</th>
             <th>Région</th>
             <th></th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -22,8 +22,11 @@
                 <td>@e.Nom</td>
                 <td>@e.Elo</td>
                 <td>@e.Region</td>
-                <td><a class="btn btn-danger" @onclick="@DeleteEquipe(e.Id)">Suppr.</a></td>
-                <td><a class="btn btn-light" href="equipe/update/@e.Id">Modif.</a></td>
+                <td>
+                    <a class="btn btn-light" href="equipe/@e.Id"><span class="oi oi-magnifying-glass"></span></a>
+                    <a class="btn btn-light" href="equipe/update/@e.Id"><span class="oi oi-pencil"></span></a>
+                    <a class="btn btn-danger" href="equipe/delete/@e.Id"><span class="oi oi-delete"></span></a>
+                </td>
             </tr>
         }
     </tbody>
@@ -34,11 +37,5 @@
     protected override void OnInitialized()
     {
         equipes = EquipeService.GetAll();
-    }
-
-    protected EventCallback DeleteEquipe(Int16 id)
-    {
-
-        return new EventCallback();
     }
 }

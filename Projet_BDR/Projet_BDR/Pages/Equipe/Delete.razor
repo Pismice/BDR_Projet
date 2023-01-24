@@ -1,0 +1,35 @@
+﻿@page "/equipe/delete/{id}"
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+<PageTitle>Suppréssion de l'équipe : @equipe.Nom'</PageTitle>
+<form>
+    <h3 class="control-label">Êtes-vous sûre de vouloir supprimer l'équipe @equipe.Nom?</h3>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Accept" value="Oui" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Equipe equipe;
+    protected override void OnInitialized()
+    {
+        equipe = EquipeService.GetById(Int16.Parse(id));
+    }
+    protected void Accept()
+    {
+        EquipeService.Delete(Int16.Parse(id));
+        End();
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
+    }
+}

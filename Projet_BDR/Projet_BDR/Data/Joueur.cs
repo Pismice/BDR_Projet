@@ -14,7 +14,7 @@ namespace Projet_BDR.Data
         [Required]
         public string Pseudonyme { get; set; }
         [Required]
-        public DateTime DateNaissance { get; set; }
+        public DateOnly DateNaissance { get; set; }
         [Required]
         public Int16 Salaire { get; set; }
         [ForeignKey("Pays")]

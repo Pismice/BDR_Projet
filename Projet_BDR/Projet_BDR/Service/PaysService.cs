@@ -19,7 +19,7 @@ namespace Projet_BDR.Service
 
         public string GetName(Int16 id)
         {
-            FormattableString query = $@"SELECT nom FROM pays WHERE id = '{id}'";
+            FormattableString query = $"SELECT * FROM pays WHERE id = {id}";
             return _context.Pays.FromSqlInterpolated(query).ToArray()[0].Nom;
         }
     }

@@ -1,13 +1,10 @@
-﻿@page "/joueur"
-@inject JoueurService JoueurService
+﻿@page "/equipe/{id}"
 @inject EquipeService EquipeService
 @inject PaysService PaysService
+@inject NavigationManager NavigationManager
 
-<h3>Listes des joueurs 
-    <a class="btn btn-primary" href="joueur/add">
-        Ajouter un joueur
-    </a>
-</h3>
+<h3>Information de l'équipe @equipe.Nom</h3>
+<h4>Liste des joueurs</h4>
 <table class="table">
     <thead>
         <tr>
@@ -17,12 +14,10 @@
             <th>Date de naissance</th>
             <th>Salaire</th>
             <th>Pays</th>
-            <th>Equipe</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach(Joueur j in joueurs)
+        @foreach (Joueur j in joueurs)
         {
             <tr>
                 <td>@j.Nom</td>
@@ -31,21 +26,30 @@
                 <td>@j.DateNaissance</td>
                 <td>@j.Salaire</td>
                 <td>@PaysService.GetName(j.IdPays)</td>
-                <td>@EquipeService.GetName(j.IdEquipe)</td>
-                <td>
-                    <a class="btn btn-light" href="joueur/update/@j.Id"><span class="oi oi-pencil"></span></a>
-                    <a class="btn btn-danger" href="joueur/delete/@j.Id"><span class="oi oi-delete"></span></a>
-                </td>
             </tr>
         }
     </tbody>
 </table>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public string id { get; set; }
+    Equipe equipe = new Equipe();
     Joueur[]? joueurs;
     protected override void OnInitialized()
     {
-        joueurs = JoueurService.GetAll();
-
+        this.equipe = EquipeService.GetById(Int16.Parse(id));
+        joueurs = EquipeService.GetJoueurs(Int16.Parse(id));
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
     }
 }

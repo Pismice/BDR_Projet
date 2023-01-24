@@ -21,14 +21,29 @@ namespace Projet_BDR.Service
             FormattableString query = $"SELECT * FROM equipe WHERE id = {@id}";
             return _context.Equipe.FromSqlInterpolated(query).ToArray()[0];
         }
+        public Joueur[] GetJoueurs(Int16 id)
+        {
+            FormattableString query = $"SELECT * FROM joueur where idequipe = {@id}";
+            return _context.Joueur.FromSqlInterpolated(query).ToArray();
+        }
         public string GetName(Int16 id)
         {
-            FormattableString query = $"SELECT nom FROM equipe WHERE id = {id}";
+            FormattableString query = $"SELECT * FROM equipe WHERE id = {id}";
             return _context.Equipe.FromSqlInterpolated(query).ToArray()[0].Nom;
+        }
+        public void Add(Equipe e)
+        {
+            FormattableString query = $"INSERT INTO equipe (nom,elo,region) VALUES ({e.Nom},{e.Elo},{e.Region})";
+            _context.Database.ExecuteSqlInterpolated(query);
         }
         public void Update(Equipe e)
         {
             FormattableString query = $"UPDATE equipe SET nom = {e.Nom}, elo = {e.Elo}, region = {e.Region} WHERE id = {e.Id}";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+        public void Delete(Int16 id)
+        {
+            FormattableString query = $"DELETE FROM equipe WHERE id = {id}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
     }

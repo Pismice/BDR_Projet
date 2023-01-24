@@ -6,7 +6,7 @@ INSERT INTO pays (nom) VALUES ('Allemagne');
 INSERT INTO pays (nom) VALUES ('Pologne');
 INSERT INTO pays (nom) VALUES ('Autriche');
 
-INSERT INTO equipe (nom, elo, region) VALUES ('Sentinels',1000,'AMERICAS');
+INSERT INTO equipe (nom, elo, region) VALUES ('SENTINELS',1000,'AMERICAS');
 INSERT INTO equipe (nom, elo, region) VALUES ('CLOUD9',1000,'AMERICAS');
 INSERT INTO equipe (nom, elo, region) VALUES ('100 THIEVES',1000,'AMERICAS');
 INSERT INTO equipe (nom, elo, region) VALUES ('LOUD',1000,'AMERICAS');

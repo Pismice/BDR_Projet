@@ -15,7 +15,11 @@
             </div>
             <div class="form-group">
                 <label for="Region" class="control-label">Region</label>
-                <input form="Region" class="form-control" @bind="@equipe.Region" />
+                <select form="Region" class="form-control" @bind="@equipe.Region">
+                    <option value="@Region.AMERICAS">@Region.AMERICAS</option>
+                    <option value="@Region.PACIFIC">@Region.PACIFIC</option>
+                    <option value="@Region.EMEA">@Region.EMEA</option>
+                </select>
             </div>
         </div>
     </div>
@@ -24,7 +28,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <input type="button" class="btn btn-primary" @onclick="@UpdateEquipe" value="Modifier" />
-                <input type="button" class="btn btn-secondary" @onclick="@Cancel" value="Annuler" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
             </div>
         </div>
     </div>
@@ -42,10 +46,10 @@
     protected void UpdateEquipe()
     {
         EquipeService.Update(equipe);
-        NavigationManager.NavigateTo("equipe");
+        End();
     }
 
-    protected void Cancel()
+    protected void End()
     {
         NavigationManager.NavigateTo("equipe");
     }

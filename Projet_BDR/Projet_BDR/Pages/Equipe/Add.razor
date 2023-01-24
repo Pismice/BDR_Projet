@@ -1,5 +1,46 @@
-﻿<h3>Add</h3>
+﻿@page "/equipe/add"
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+<PageTitle>Ajouter une nouvelle équipe</PageTitle>
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="col-md-8">
+                <label for="Nom" class="control-label">Nom</label>
+                <input form="Nom" class="form-control" @bind="@equipe.Nom" />
+            </div>
+            <div class="col-md-8">
+                <label for="Region" class="control-label">Région</label>
+                <select form="Region" class="form-control" id="region" name="region" @bind="@equipe.Region">
+                    <option value="@Region.AMERICAS">@Region.AMERICAS</option>
+                    <option value="@Region.PACIFIC">@Region.PACIFIC</option>
+                    <option value="@Region.EMEA">@Region.EMEA</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@AddEquipe" value="Ajouter" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
 
 @code {
+    Equipe equipe = new Equipe();
 
+    protected void AddEquipe()
+    {
+        equipe.Elo = 1000;
+        EquipeService.Add(equipe);
+        End();
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
+    }
 }

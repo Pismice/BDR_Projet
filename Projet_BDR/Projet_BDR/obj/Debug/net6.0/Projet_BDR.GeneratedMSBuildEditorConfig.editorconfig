@@ -24,8 +24,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEFkZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXERlbGV0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEluZGV4LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEluc3BlY3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Update.razor]
@@ -38,6 +46,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEFkZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Delete.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXERlbGV0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Index.razor]

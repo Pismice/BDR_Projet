@@ -29,6 +29,25 @@
 				<label for="Salaire" class="control-label">Salaire</label>
 				<input form="Salaire" class="form-control" @bind="@joueur.Salaire"/>
 			</div>
+			<div class="form-group">
+				<label for="idPays" class="control-label">Pays</label>f
+				<select form="idPays" id="pays" class="form-control" name="pays" @bind="@joueur.IdPays">
+					@foreach(Pays p in pays)
+					{
+						<option value="@p.Id">@p.Nom</option>
+					}
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="idEquipe" class="control-label">Pays</label>
+				<select form="idEquipe" class="form-control" id="equipe" name="equipe" @bind="@joueur.IdEquipe">
+					@foreach (Equipe e in equipes)
+					{
+						<option value="@e.Id">@e.Nom</option>
+					}
+				</select>
+			</div>
 		</div>
 	</div>
 	<br />
@@ -36,7 +55,7 @@
 		<div class="col-md-4">
 			<div class="form-group">
 				<input type="button" class="btn btn-primary" @onclick="@AddJoueur" value="Ajouter" />
-				<input type="button" class="btn btn-secondary" @onclick="@Cancel" value="Annuler" />
+				<input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
 			</div>
 		</div>
 	</div>
@@ -44,15 +63,23 @@
 
 @code {
 	Joueur joueur = new Joueur();
+	Pays[] pays;
+	Equipe[] equipes;
+
+	protected override void OnInitialized()
+	{
+		pays = PaysService.GetAll();
+		equipes = EquipeService.GetAll();
+	}
 
 	protected void AddJoueur()
 	{
-		JoueurService.AddJoueur(joueur);
-		NavigationManager.NavigateTo("joueur");
+		JoueurService.Add(joueur);
+		End();
 
 	}
 
-	protected void Cancel()
+	protected void End()
 	{
 		NavigationManager.NavigateTo("joueur");
 	}
