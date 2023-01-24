@@ -36,17 +36,6 @@
 					}
 				</select>
 			</div>
-
-			<div class="form-group">
-				<label for="idEquipe" class="control-label">Equipe</label>
-				<select form="idEquipe" class="form-control" id="equipe" name="equipe" @bind="@joueur.IdEquipe">
-					<option value=""></option>
-					@foreach (Equipe e in equipes)
-					{
-						<option value="@e.Id">@e.Nom</option>
-					}
-				</select>
-			</div>
 		</div>
 	</div>
 	<br />

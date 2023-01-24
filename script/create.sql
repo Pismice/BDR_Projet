@@ -99,10 +99,10 @@ CREATE TABLE Manche(
 	idTournoi SMALLINT NOT NULL,
 	noMatch SMALLINT NOT NULL,
 	noManche SMALLSERIAL,
-	noCarte SMALLINT NOT NULL,
+	idCarte SMALLINT NOT NULL,
 	CONSTRAINT PK_Manche PRIMARY KEY(idTournoi,noMatch,noManche),
 	CONSTRAINT FK_Manche_idTournoi_noMatch FOREIGN KEY (idTournoi,noMatch) REFERENCES Match(idTournoi,noMatch) ON DELETE CASCADE,
-	CONSTRAINT FK_Manche_idCarte FOREIGN KEY (noCarte) REFERENCES Carte(id) ON DELETE CASCADE
+	CONSTRAINT FK_Manche_idCarte FOREIGN KEY (idCarte) REFERENCES Carte(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS Round CASCADE;
@@ -160,6 +160,15 @@ INNER JOIN joueur ON equipe.id = joueur.idEquipe
 GROUP BY equipe.id
 HAVING count(joueur.id) = 5;
 
+DROP VIEW IF EXISTS vMancheFini;
+CREATE VIEW vMancheFini AS
+SELECT idTournoi, noMatch, noManche, idEquipe idVainqueur
+FROM 
+
+DROP VIEW IF EXISTS vMatchFini;
+CREATE VIEW vMatchFini AS
+
+
 CREATE OR REPLACE FUNCTION checkManche() RETURNS TRIGGER AS 
 $BODY$
 LANGUAGE plpgsql
@@ -188,3 +197,32 @@ END;
 CREATE TRIGGER addManche AFTER INSERT OF Manche 
 FOR EACH ROW
 EXECUTE PROCEDURE checkManche();
+
+CREATE OR REPLACE FUNCTION checkMatchDate() RETURNS TRIGGER AS
+$BODY$
+DECLARE 
+	dateDebut DATE;
+	dateFin DATE;
+LANGUAGE plpgsql;
+BEGIN
+	SELECT dateDebut, dateFin FROM Tournoi
+	WHERE idTournoi = NEW.idTournoi
+	INTO (dateDebut,dateFin);
+	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
+		THEN raise exception 'La match na pas lieu durant le tournoi!';
+	END IF;
+	RETURN NEW;
+END;
+
+CREATE OR REPLACE FUNCTION triggersBeforeMatch() RETURNS VOID 
+AS $BODY$
+LANGUAGE plpgsql;
+BEGIN
+	PERFORM checkMatchDate();
+
+END;
+$BODY$
+
+CREATE TRIGGER addMatch BEFORE INSERT OF match
+FOR EACH ROW
+EXECUTE PROCEDURE triggersBeforeMatch();

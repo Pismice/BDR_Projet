@@ -722,11 +722,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\Projet_BDR\\Projet_BDR\\Projet_BDR.csproj",
+      "projectUniqueName": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\BlazorApp\\Projet_BDR\\Projet_BDR.csproj",
       "projectName": "Projet_BDR",
-      "projectPath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\Projet_BDR\\Projet_BDR\\Projet_BDR.csproj",
+      "projectPath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\BlazorApp\\Projet_BDR\\Projet_BDR.csproj",
       "packagesPath": "C:\\Users\\oscar\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\Projet_BDR\\Projet_BDR\\obj\\",
+      "outputPath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\BlazorApp\\Projet_BDR\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\oscar\\AppData\\Roaming\\NuGet\\NuGet.Config",

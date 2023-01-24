@@ -9,97 +9,97 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Projet_BDR
 build_property.RootNamespace = Projet_BDR
-build_property.ProjectDir = C:\Users\oscar\OneDrive\Bureau\HEIG\2eme\BDR\BDR_Projet\Projet_BDR\Projet_BDR\
+build_property.ProjectDir = C:\Users\oscar\OneDrive\Bureau\HEIG\2eme\BDR\BDR_Projet\BlazorApp\Projet_BDR\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\oscar\OneDrive\Bureau\HEIG\2eme\BDR\BDR_Projet\Projet_BDR\Projet_BDR
+build_property.MSBuildProjectDirectory = C:\Users\oscar\OneDrive\Bureau\HEIG\2eme\BDR\BDR_Projet\BlazorApp\Projet_BDR
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/App.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Add.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEFkZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Delete.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXERlbGV0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Index.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEluZGV4LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Inspect.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Inspect.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEluc3BlY3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Equipe/Update.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Update.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXFVwZGF0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Add.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEFkZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Delete.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXERlbGV0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Index.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEluZGV4LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Joueur/Update.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Update.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXFVwZGF0ZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Add.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxBZGQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Delete.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Delete.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxEZWxldGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Index.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxJbmRleC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Inspect.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Inspect.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxJbnNwZWN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/Update.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Update.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxVcGRhdGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Tournoi/UpdateEquipe.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/UpdateEquipe.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxVcGRhdGVFcXVpcGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/_Imports.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Shared/MainLayout.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-ynq8m9cxiz
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Shared/NavMenu.razor]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Shared/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-1ih24466ce
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/Error.cshtml]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/_Host.cshtml]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/Projet_BDR/Projet_BDR/Pages/_Layout.cshtml]
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

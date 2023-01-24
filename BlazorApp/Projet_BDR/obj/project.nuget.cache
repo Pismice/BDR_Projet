@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "+zRYelDGFfXUHRK1hQgTvwfvqSf3Lf5CxeaLYbvLEnd57v7O+hPkB/9f6XITeZKlY1/MEC2VQvZAfQzk2bzRIw==",
+  "dgSpecHash": "duS5UkbhvA2YzEJMUL/J4N/MPbtMnMHaEB59LcfJXNnI+0Uxwqt1dE3a1z5qUXSCGIKPqc/MRVPl8trN535heQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\Projet_BDR\\Projet_BDR\\Projet_BDR.csproj",
+  "projectFilePath": "C:\\Users\\oscar\\OneDrive\\Bureau\\HEIG\\2eme\\BDR\\BDR_Projet\\BlazorApp\\Projet_BDR\\Projet_BDR.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\oscar\\.nuget\\packages\\microsoft.entityframeworkcore\\7.0.1\\microsoft.entityframeworkcore.7.0.1.nupkg.sha512",
     "C:\\Users\\oscar\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\7.0.1\\microsoft.entityframeworkcore.abstractions.7.0.1.nupkg.sha512",
