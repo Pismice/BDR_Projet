@@ -38,7 +38,8 @@ CREATE TABLE Equipe(
 	nom NAME_FORMAT,
 	elo SMALLINT,
 	region REGION,
-	CONSTRAINT PK_Equipe PRIMARY KEY (id)
+	CONSTRAINT PK_Equipe PRIMARY KEY (id),
+	CONSTRAINT elo_check CHECK (elo > 0)
 );
 
 DROP TABLE IF EXISTS Joueur CASCADE;
@@ -53,18 +54,21 @@ CREATE TABLE Joueur(
 	idEquipe SMALLINT,
 	CONSTRAINT PK_Joueur PRIMARY KEY (id),
 	CONSTRAINT FK_Joueur_idPays FOREIGN KEY (idPays) REFERENCES Pays(id) ON DELETE CASCADE,
-	CONSTRAINT FK_Joueur_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id) ON DELETE CASCADE
+	CONSTRAINT FK_Joueur_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id) ON DELETE CASCADE,
+	CONSTRAINT salaire_check CHECK (salaire > 0)
 );
 
 DROP TABLE IF EXISTS Tournoi CASCADE;
 CREATE TABLE Tournoi(
 	id SMALLSERIAL,
 	nom NAME_FORMAT,
-	cashprize DECIMAL,
+	cashprize SMALLINT,
 	point SMALLINT,
 	dateDebut DATE,
 	dateFin DATE,
-	CONSTRAINT PK_Tournoi PRIMARY KEY (id)
+	CONSTRAINT PK_Tournoi PRIMARY KEY (id),
+	CONSTRAINT cashprize_check CHECK(cashprize > 0 AND cashprize % 8 = 0),
+	CONSTRAINT point_check CHECK(point > 0 AND point % 8 = 0)
 );
 
 DROP TABLE IF EXISTS Tournoi_Equipe CASCADE;
@@ -84,7 +88,8 @@ CREATE TABLE Match(
 	noMatchSuivant SMALLINT,
 	CONSTRAINT PK_Match PRIMARY KEY (idTournoi,noMatch),
 	CONSTRAINT FK_Match_idTournoi FOREIGN KEY (idTournoi) REFERENCES Tournoi(id) ON DELETE CASCADE,
-	CONSTRAINT FK_Match_noMatchSuivant FOREIGN KEY (idTournoi,noMatchSuivant) REFERENCES Match(idTournoi,noMatch) ON DELETE CASCADE
+	CONSTRAINT FK_Match_noMatchSuivant FOREIGN KEY (idTournoi,noMatchSuivant) REFERENCES Match(idTournoi,noMatch) ON DELETE CASCADE,
+	CONSTRAINT nomatchsuivant_check CHECK (noMatchSuivant <> noMatch)
 );
 
 DROP TABLE IF EXISTS Manche CASCADE;
@@ -140,3 +145,11 @@ CREATE TABLE Joueur_Agent_Manche(
 	CONSTRAINT FK_Joueur_Agent_Manche_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche) ON DELETE CASCADE,
 	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche,idAgent)
 );
+
+
+DROP VIEW IF EXISTS vEquipeActive;
+CREATE VIEW vEquipeActive AS 
+SELECT equipe.* FROM equipe 
+INNER JOIN joueur ON equipe.id = joueur.idEquipe
+GROUP BY equipe.id
+HAVING count(joueur.id) == 5;
