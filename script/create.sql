@@ -160,16 +160,31 @@ INNER JOIN joueur ON equipe.id = joueur.idEquipe
 GROUP BY equipe.id
 HAVING count(joueur.id) = 5;
 
+DROP VIEW IF EXISTS vRoundFini;
+CREATE VIEW vRoundFini AS
+SELECT round.idTournoi idTournoi, round.noMatch noMatch, round.noManche noManche, equipe.id idVainqueur
+FROM round 
+INNER JOIN match on (match.idTournoi,match.noMatch) = (round.idTournoi, round.noMatch)
+INNER JOIN kill on (round.idTournoi, round.noMatch, round.noManche, round.noRound) = (kill.idTournoi, kill.noMatch, kill.noManche, kill.noRound)
+INNER JOIN joueur on kill.idTueur = joueur.id
+INNER JOIN equipe on joueur.idEquipe = equipe.id
+WHERE match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id
+GROUP BY round.idtournoi, round.nomatch, round.nomanche, equipe.id
+HAVING count(kill.idMort) = 5;
+
+
+
 DROP VIEW IF EXISTS vMancheFini;
 CREATE VIEW vMancheFini AS
 SELECT idTournoi, noMatch, noManche, idEquipe idVainqueur
-FROM 
+FROM Manche;
 
 DROP VIEW IF EXISTS vMatchFini;
 CREATE VIEW vMatchFini AS
+SELECT * FROM Match;
 
 
-CREATE OR REPLACE FUNCTION checkManche() RETURNS TRIGGER AS 
+CREATE OR REPLACE FUNCTION checkNumberManche() RETURNS TRIGGER AS 
 $BODY$
 LANGUAGE plpgsql
 DECLARE 
@@ -189,14 +204,40 @@ BEGIN
 	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
 	INTO count;
 	IF (count > bo) THEN 
-		raise exception 'Il y a trop de manche pour ce match!';
+		ROLLBACK;
 	END IF;
-	RETURN NEW;
+	RETURN NULL;
 END;
 
-CREATE TRIGGER addManche AFTER INSERT OF Manche 
+CREATE OR REPLACE FUNCTION checkSameCarte() RETURNS VOID
+AS $BODY$
+LANGUAGE plpgsql;
+DECLARE 
+	count integer;
+BEGIN 
+	SELECT count(noManche) FROM manche
+	WHERE (idTournoi, noMatch) = (new.idTournoi, new.noMatch) AND idCarte = new.idCarte
+	INTO count;
+	if(count > 1) then 
+		ROLLBACK;
+	END IF;
+	RETURN NULL;
+END;
+$BODY$
+
+CREATE OR REPLACE FUNCTION triggersAfterManche() RETURNS VOID 
+AS $BODY$
+LANGUAGE plpgsql;
+BEGIN
+	PERFORM checkNumberManche();
+	PERFORM checkSameCarte();
+END;
+$BODY$
+
+
+CREATE OR REPLACE TRIGGER afterInsertManche AFTER INSERT OF Manche 
 FOR EACH ROW
-EXECUTE PROCEDURE checkManche();
+EXECUTE PROCEDURE triggersAfterManche();
 
 CREATE OR REPLACE FUNCTION checkMatchDate() RETURNS TRIGGER AS
 $BODY$
@@ -209,12 +250,14 @@ BEGIN
 	WHERE idTournoi = NEW.idTournoi
 	INTO (dateDebut,dateFin);
 	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
-		THEN raise exception 'La match na pas lieu durant le tournoi!';
+		THEN ROLLBACK;
+	ELSE 
+
 	END IF;
-	RETURN NEW;
+	RETURN NULL;
 END;
 
-CREATE OR REPLACE FUNCTION triggersBeforeMatch() RETURNS VOID 
+CREATE OR REPLACE FUNCTION triggersAfterMatch() RETURNS VOID 
 AS $BODY$
 LANGUAGE plpgsql;
 BEGIN
@@ -223,6 +266,47 @@ BEGIN
 END;
 $BODY$
 
-CREATE TRIGGER addMatch BEFORE INSERT OF match
+CREATE OR REPLACE TRIGGER beforeInsertMatch AFTER INSERT OF match
 FOR EACH ROW
-EXECUTE PROCEDURE triggersBeforeMatch();
+EXECUTE PROCEDURE triggersAfterMatch();
+
+
+CREATE OR REPLACE FUNCTION checkKillSameTeam() RETURNS TRIGGER AS
+$BODY$
+LANGUAGE plpgsql;
+BEGIN
+	IF((SELECT idEquipe FROM joueur where id = new.idTueur) = (SELECT idEquipe FROM Joueur WHERE id = new.idMort)) THEN 
+		raise exception 'Un joueur ne peux pas tuer un joueur de son équipe';
+	END IF;
+	RETURN NULL;
+END;
+
+CREATE OR REPLACE FUNCTION checkJoueurNotKilledTwice() RETURNS TRIGGER AS
+$BODY$
+LANGUAGE plpgsql;
+DECLARE 
+	count integer;
+BEGIN
+	SELECT count(idTueur) 
+	FROM Kill 
+	WHERE (idtournoi,nomatch,nomanche,noround) = (new.idtournoi, new.nomatch, new.nomanche, new.noround) AND idMort = new.idMort
+	INTO count; 
+	IF(count = 2) THEN 
+		raise exception 'Le joueur a deja été tué!';
+	END IF;
+	RETURN NULL;
+END;
+
+CREATE OR REPLACE triggersAfterAddKill() RETURNS VOID
+AS $BODY$
+LANGUAGE plpgsql;
+BEGIN
+	PERFORM checkKillSameTeam();
+	PERFORM checkJoueurNotKilledTwice();
+END;
+$BODY$
+
+CREATE OR REPLACE TRIGGER afterAddKill AFTER INSERT OF Kill
+FOR EACH ROW 
+EXECUTE PROCEDURE triggersAfterAddKill();
+
