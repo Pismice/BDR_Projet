@@ -1,0 +1,60 @@
+﻿@page "/equipe/classement"
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Classement</PageTitle>
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="col-md-8">
+                <label for="Region" class="control-label">Région</label>
+                <select form="Region" class="form-control" @onclick="@ClassementGet" id="region" name="region" @bind="@r">
+                    <option value="@Region.AMERICAS">@Region.AMERICAS</option>
+                    <option value="@Region.PACIFIC">@Region.PACIFIC</option>
+                    <option value="@Region.EMEA">@Region.EMEA</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nom équipe</th>
+                <th>Élo</th>
+                <th>Région</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Equipe e in equipes)
+            {
+                <tr>
+                    <td>@(++no)</td>
+                    <td>@e.Nom</td>
+                    <td>@e.Elo</td>
+                    <td>@e.Region</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+
+@code {
+    int no;
+    Region r = Region.EMEA;
+    Equipe[]? equipes;
+
+    protected override void OnInitialized()
+    {
+        ClassementGet();
+    }
+
+    protected void ClassementGet()
+    {
+        no = 0; 
+        equipes = EquipeService.GetClassement(r);
+    }
+}
+

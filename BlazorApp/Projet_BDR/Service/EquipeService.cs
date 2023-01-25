@@ -46,5 +46,10 @@ namespace Projet_BDR.Service
             FormattableString query = $"DELETE FROM equipe WHERE id = {id}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
+        public Equipe[]? GetClassement(Region r)
+        {
+            FormattableString query = $"SELECT * FROM equipe WHERE region = {@r} ORDER BY elo DESC";
+            return _context.Equipe.FromSqlInterpolated(query).ToArray();
+        }
     }
 }
