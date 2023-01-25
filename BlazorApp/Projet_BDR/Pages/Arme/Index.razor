@@ -1,0 +1,33 @@
+﻿@page "/arme"
+@inject ArmeService ArmeService
+
+<h3>Statistique sur les armes</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cl.</th>
+            <th>Nom</th>
+            <th>Nombre de kill</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(VArmeStat v in vas)
+        {
+            <tr>
+                <td>@(++cl)</td>
+                <td>@v.Nom</td>
+                <td>@v.NombreKills</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    VArmeStat[] vas;
+    int cl = 0;
+
+    protected override void OnInitialized()
+    {
+        vas = ArmeService.GetVArmeStats();
+    }
+}

@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Data\" />
 	<Folder Include="Pages\Agent\" />
-	<Folder Include="Pages\Arme\" />
 	<Folder Include="Pages\Carte\" />
 	<Folder Include="Pages\Manche\" />
 	<Folder Include="Pages\Match\" />
