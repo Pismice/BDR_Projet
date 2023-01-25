@@ -4,11 +4,18 @@
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
 
-<h3>Information du tournoi @tournoi.Nom</h3>
+<h3>Information du tournoi @tournoi.Nom 
+    @if (!hasStarted)
+    {
+        <a class="btn btn-primary" href="tournoi/@tournoi.Id/start">
+            Commencer le tournoi
+        </a>
+    }
+</h3>
 <h4>Liste des équipes 
     <a class="btn btn-primary" href="tournoi/@tournoi.Id/add_equipe">
         Ajouter une équipe au tournoi
-    </a>
+    </a>    
 </h4>
 <table class="table">
     <thead>
@@ -46,10 +53,12 @@
     public string id { get; set; }
     Tournoi tournoi;
     Equipe[] equipes;
+    bool hasStarted;
     protected override void OnInitialized()
     {
         tournoi = TournoiService.GetById(Int16.Parse(id));
         equipes = TournoiService.GetEquipeFromTournoi(Int16.Parse(id));
+        hasStarted = TournoiService.GetAllMatch(Int16.Parse(id)).Length != 0;
     }
     protected void End()
     {

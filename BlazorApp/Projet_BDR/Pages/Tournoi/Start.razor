@@ -1,0 +1,75 @@
+﻿@page "/tournoi/{id}/start"
+@inject TournoiService TournoiService
+@inject NavigationManager NavigationManager
+
+<h3>Start</h3>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    int nombre_participant;
+    bool hasAlreadyStarted;
+    GameFormat format;
+    Tournoi t;
+    List<Equipe> equipes;
+
+    protected override void OnInitialized()
+    {
+        t = TournoiService.GetById(Int16.Parse(id));
+        hasAlreadyStarted = TournoiService.GetAllMatch(Int16.Parse(id)).Length != 0;
+        nombre_participant = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).Length;
+        if (canStart())
+        {
+            equipes = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).ToList();
+            initMatch();
+            assignMatch();
+        }
+    }
+
+    public bool canStart()
+    {
+        return BitOperations.IsPow2(nombre_participant) && !hasAlreadyStarted;
+    }
+
+    public void initMatch()
+    {
+        int nombreMatchTour = 1;
+        Int16 noMatch = (Int16)(nombre_participant - 1);
+        Queue<Int16> noMatchSuivant = new Queue<short>();
+        while(noMatch > 0)
+        {
+            for (int i = 0; i < nombreMatchTour; ++i)
+            {
+                if(noMatchSuivant.Count != 0){
+                    TournoiService.AddMatch(Int16.Parse(id), noMatch, format, t.DateDebut, noMatchSuivant.Dequeue());
+                } else
+                {
+                    TournoiService.AddMatch(Int16.Parse(id), noMatch, format, t.DateDebut);
+                }
+                for(int j = 0; j < 2; ++j)
+                {
+                    noMatchSuivant.Enqueue(noMatch);
+                }
+                noMatch--;
+            }
+            nombreMatchTour *= 2;
+        }
+    }
+
+    public void assignMatch()
+    {
+        Random rng = new Random();
+        for(Int16 noMatch = 1; noMatch < (nombre_participant/2)+1; ++noMatch)
+        {
+            int index = rng.Next(equipes.Count);
+            Equipe gauche = equipes[index];
+            equipes.Remove(gauche); 
+
+            index = rng.Next(equipes.Count);
+            Equipe droite = equipes[index];
+            equipes.Remove(droite);
+
+            TournoiService.UpdateMatch(Int16.Parse(id), noMatch, gauche.Id, droite.Id);
+        }
+    }
+}

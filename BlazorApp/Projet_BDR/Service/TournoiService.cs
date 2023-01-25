@@ -41,6 +41,12 @@ namespace Projet_BDR.Service
             _context.Database.ExecuteSqlInterpolated(query);
         }
 
+        public void AddMatch(Int16 idTournoi,Int16 noMatch,GameFormat format, DateOnly gamedate,Int16? noMatchSuivant = null)
+        {
+            FormattableString query = $"INSERT INTO match (idTournoi,noMatch,gameformat, gamedate,nomatchsuivant) VALUES ({idTournoi},{noMatch},{format},{gamedate},{noMatchSuivant})";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+
         public void DeleteEquipe(Tournoi t, Equipe e)
         {
             FormattableString query = $"DELETE FROM tournoi_equipe WHERE idTournoi = {t.Id} AND idEquipe = {e.Id}";
@@ -57,5 +63,19 @@ namespace Projet_BDR.Service
             FormattableString query = $"DELETE FROM tournoi WHERE id = {id}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
+
+        public Match[] GetAllMatch(Int16 idTournoi)
+        {
+            FormattableString query = $"SELECT match.* FROM match WHERE idTournoi = {idTournoi}";
+            return _context.Match.FromSqlInterpolated(query).ToArray();
+        }
+
+        public void UpdateMatch(Int16 idTournoi, Int16 noMatch, Int16 idEquipeGauche, Int16 idEquipeDroite)
+        {
+            FormattableString query = $"UPDATE match SET idequipegauche = {idEquipeGauche}, idequipedroite = {idEquipeDroite} WHERE idtournoi = {idTournoi} and noMatch = {noMatch}";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+        
     }
+
 }

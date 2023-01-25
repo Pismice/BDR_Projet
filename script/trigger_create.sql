@@ -76,7 +76,7 @@ DECLARE
 	dateFin tournoi.datefin%type;
 
 BEGIN
-	SELECT dateDebut, dateFin FROM Tournoi
+	SELECT tournoi.dateDebut, tournoi.dateFin FROM Tournoi
 	WHERE tournoi.id = NEW.idTournoi
 	INTO dateDebut,dateFin;
 	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
@@ -96,7 +96,7 @@ DECLARE
 BEGIN 
 	SELECT COUNT(idVainqueur) FROM vMatchFini 
 	WHERE (vMatchFini.idTournoi,vMatchFini.noMatch) = (NEW.idtournoi,NEW.noMatch)
-	GROUP BY vMancheFini.idTournoi,vMancheFini.noManche
+	GROUP BY vMatchFini.idTournoi,vMatchFini.noMatch
 	INTO count;
 	IF(count > 0) THEN 
 		ROLLBACK;

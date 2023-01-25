@@ -18,6 +18,9 @@ builder.Services.AddScoped<EquipeService>();
 builder.Services.AddScoped<JoueurService>();
 builder.Services.AddScoped<PaysService>();
 builder.Services.AddScoped<ArmeService>();
+builder.Services.AddScoped<MatchService>();
+builder.Services.AddScoped<MancheService>();
+builder.Services.AddScoped<RoundService>();
 
 
 var app = builder.Build();

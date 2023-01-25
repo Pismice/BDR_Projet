@@ -15,6 +15,6 @@ namespace Projet_BDR.Data
         public GameFormat GameFormat { get; set; }
         [Required]
         public DateTime GameDate { get; set; }
-        public Int16 NoMatchSuivant { get; set; }
+        public Int16? NoMatchSuivant { get; set; }
     }
 }

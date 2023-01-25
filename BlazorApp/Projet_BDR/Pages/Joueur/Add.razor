@@ -26,10 +26,6 @@
 				<input form="DateNaissance" class="form-control" @bind="@joueur.DateNaissance" />
 			</div>
 			<div class="form-group">
-				<label for="Salaire" class="control-label">Salaire</label>
-				<input form="Salaire" class="form-control" @bind="@joueur.Salaire"/>
-			</div>
-			<div class="form-group">
 				<label for="idPays" class="control-label">Pays</label>
 				<select form="idPays" id="pays" class="form-control" name="pays" @bind="@joueur.IdPays">
 					@foreach(Pays p in pays)
