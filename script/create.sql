@@ -193,23 +193,28 @@ WHEN match.gameFormat = 'bo3' THEN 2
 WHEN match.gameFormat = 'bo5' THEN 3
 END;
 
+DROP VIEW IF EXISTS vJoueurStat;
+CREATE VIEW vJoueurStat AS 
+SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme
+FROM joueur
+
+
 -- fonction triggers pour manche
 CREATE OR REPLACE FUNCTION checkNumberManche() RETURNS TRIGGER AS 
 $BODY$
-LANGUAGE plpgsql
 DECLARE 
 	bo SMALLINT;
 	count SMALLINT;
-	gameFormat GAME_FORMAT;
+	gameFormat match.gameformat%type;
 BEGIN
 	SELECT gameFormat FROM Match
 	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
 	INTO gameFormat;
 	CASE 
-		WHEN gameFormat = bo1 THEN bo = 1
-		WHEN gameFormat = bo3 THEN bo = 3
-		WHEN gameFormat = bo5 THEN bo = 5
-	END;
+		WHEN gameFormat = 'bo1' THEN bo = 1;
+		WHEN gameFormat = 'bo3' THEN bo = 3;
+		WHEN gameFormat = 'bo5' THEN bo = 5;
+	END CASE;
 	SELECT COUNT(noManche) FROM Manche
 	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
 	INTO count;
@@ -218,26 +223,27 @@ BEGIN
 	END IF;
 	RETURN NULL;
 END;
+$BODY$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION checkSameCarte() RETURNS TRIGGER
 AS $BODY$
-LANGUAGE plpgsql;
+
 DECLARE 
 	count_carte SMALLINT;
 BEGIN 
 	SELECT count(noManche) FROM manche
 	WHERE (idTournoi, noMatch) = (new.idTournoi, new.noMatch) AND idCarte = new.idCarte
-	INTO count;
-	if(count > 1) then 
+	INTO count_carte;
+	if(count_carte > 1) then 
 		ROLLBACK;
 	END IF;
 	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION checkMancheIsOver() RETURNS TRIGGER
 AS $BODY$
-LANGUAGE plpgsql;
+
 DECLARE 
 	count SMALLINT;
 BEGIN 
@@ -250,21 +256,22 @@ BEGIN
 	END IF;
 	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 -- fonction qui regroupe les triggers de manche
-CREATE OR REPLACE FUNCTION triggersAfterManche() RETURNS VOID 
+CREATE OR REPLACE FUNCTION triggersAfterManche() RETURNS TRIGGER 
 AS $BODY$
-LANGUAGE plpgsql;
+
 BEGIN
 	PERFORM checkNumberManche();
 	PERFORM checkSameCarte();
 	PERFORM checkMancheIsOver();
+	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 -- trigger de manche
-CREATE OR REPLACE TRIGGER afterInsertManche AFTER INSERT OF Manche 
+CREATE OR REPLACE TRIGGER afterInsertManche AFTER INSERT on Manche 
 FOR EACH ROW
 EXECUTE PROCEDURE triggersAfterManche();
 
@@ -272,13 +279,13 @@ EXECUTE PROCEDURE triggersAfterManche();
 CREATE OR REPLACE FUNCTION checkMatchDate() RETURNS TRIGGER AS
 $BODY$
 DECLARE 
-	dateDebut DATE;
-	dateFin DATE;
-LANGUAGE plpgsql;
+	dateDebut tournoi.datedebut%type;
+	dateFin tournoi.datefin%type;
+
 BEGIN
 	SELECT dateDebut, dateFin FROM Tournoi
-	WHERE idTournoi = NEW.idTournoi
-	INTO (dateDebut,dateFin);
+	WHERE tournoi.id = NEW.idTournoi
+	INTO dateDebut,dateFin;
 	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
 		THEN ROLLBACK;
 	ELSE 
@@ -286,10 +293,11 @@ BEGIN
 	END IF;
 	RETURN NULL;
 END;
+$BODY$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION checkMatchIsOver() RETURNS TRIGGER
 AS $BODY$
-LANGUAGE plpgsql;
+
 DECLARE 
 	count SMALLINT;
 BEGIN 
@@ -302,37 +310,39 @@ BEGIN
 	END IF;
 	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 -- fonction qui lance toute les fonctions trigger de match
-CREATE OR REPLACE FUNCTION triggersAfterMatch() RETURNS VOID 
+CREATE OR REPLACE FUNCTION triggersAfterMatch() RETURNS TRIGGER 
 AS $BODY$
-LANGUAGE plpgsql;
+
 BEGIN
 	PERFORM checkMatchDate();
 	PERFORM checkMatchIsOver();
+	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 -- trigger de match
-CREATE OR REPLACE TRIGGER afterInsertMatch AFTER INSERT OF match
+CREATE OR REPLACE TRIGGER afterInsertMatch AFTER INSERT on match
 FOR EACH ROW
 EXECUTE PROCEDURE triggersAfterMatch();
 
 -- fonction trigger de kill
 CREATE OR REPLACE FUNCTION checkKillSameTeam() RETURNS TRIGGER AS
 $BODY$
-LANGUAGE plpgsql;
+
 BEGIN
 	IF((SELECT idEquipe FROM joueur where id = new.idTueur) = (SELECT idEquipe FROM Joueur WHERE id = new.idMort)) THEN 
 		raise exception 'Un joueur ne peux pas tuer un joueur de son équipe';
 	END IF;
 	RETURN NULL;
 END;
+$BODY$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION checkJoueurNotKilledTwice() RETURNS TRIGGER AS
 $BODY$
-LANGUAGE plpgsql;
+
 DECLARE 
 	count SMALLINT;
 BEGIN
@@ -345,10 +355,10 @@ BEGIN
 	END IF;
 	RETURN NULL;
 END;
+$BODY$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION checkRoundIsOver() RETURNS TRIGGER AS 
 $BODY$
-LANGUAGE plpgsql;
 DECLARE 
 	count SMALLINT;
 BEGIN 
@@ -356,36 +366,38 @@ BEGIN
 	WHERE (vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround) = (new.idtournoi,new.nomatch,new.nomanche,new.noround)
 	GROUP BY vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround
 	INTO count;
-	if(count > 0) THEN ROLLBACK end if;
+	if(count > 0) THEN ROLLBACK; end if;
 	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 
 -- fonction qui lance les fonctions trigger de kill
-CREATE OR REPLACE FUNCTION triggersAfterAddKill() RETURNS VOID
+CREATE OR REPLACE FUNCTION triggersAfterAddKill() RETURNS TRIGGER
 AS $BODY$
-LANGUAGE plpgsql;
 BEGIN
 	PERFORM checkKillSameTeam();
 	PERFORM checkJoueurNotKilledTwice();
 	PERFORM checkRoundIsOver();
+	RETURN NULL;
 END;
-$BODY$
+$BODY$ LANGUAGE plpgsql;
 -- trigger de kill
-CREATE OR REPLACE TRIGGER afterAddKill AFTER INSERT OF Kill
+CREATE OR REPLACE TRIGGER afterAddKill AFTER INSERT on Kill
 FOR EACH ROW 
 EXECUTE PROCEDURE triggersAfterAddKill();
 
 --fonction trigger de round
 
 --fonction qui regroupe les fonction trigger de round
-CREATE OR REPLACE FUNCTION triggersAfterAddRound() RETURNS VOID
+CREATE OR REPLACE FUNCTION triggersAfterAddRound() RETURNS TRIGGER
 AS $BODY$
-LANGUAGE plpgsql;
 BEGIN 
 	PERFORM checkRoundIsOver();
+	RETURN NULL;
 END;
+$BODY$ LANGUAGE plpgsql;
+
 --trigger de round
-CREATE OR REPLACE FUNCTION afterAddRound AFTER INSERT OF round
+CREATE OR REPLACE TRIGGER afterAddRound AFTER INSERT on round
 FOR EACH ROW
 EXECUTE PROCEDURE triggersAfterAddRound();
