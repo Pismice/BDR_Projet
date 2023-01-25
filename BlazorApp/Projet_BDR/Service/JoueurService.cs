@@ -49,7 +49,7 @@ namespace Projet_BDR.Service
 
         public VJoueurAgent[]? GetVJoueurAgent(Int16 id)
         {
-            FormattableString query = $"SELECT * FROM vjoueuragent WHERE idjoueur = {id} ORDER BY nombrefoisjouer DESC";
+            FormattableString query = $"SELECT * FROM vjoueuragent WHERE idjoueur = {id} ORDER BY nombrefoisjouer DESC, idAgent ASC";
             return _context.VJoueurAgent.FromSqlInterpolated(query).ToArray();
         }
 

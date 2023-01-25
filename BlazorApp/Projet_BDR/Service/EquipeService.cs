@@ -51,5 +51,16 @@ namespace Projet_BDR.Service
             FormattableString query = $"SELECT * FROM equipe WHERE region = {@r} ORDER BY elo DESC";
             return _context.Equipe.FromSqlInterpolated(query).ToArray();
         }
+
+        public VEquipeStat GetStatById(Int16 id)
+        {
+            FormattableString query = $"SELECT * FROM vequipestat WHERE id = {id}";
+            VEquipeStat[] ves = _context.VEquipeStat.FromSqlInterpolated(query).ToArray();
+            if(ves.Length == 0)
+            {
+                return null;
+            }
+            return ves[0];
+        }
     }
 }

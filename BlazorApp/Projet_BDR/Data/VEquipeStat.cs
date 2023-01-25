@@ -9,6 +9,6 @@ namespace Projet_BDR.Data
         public string Nom { get;set;}
         public int NombreTournoiJouer { get;set;}
         public int NombreMatchJouer { get;set;}
-        public int NombreMatchGagner { get;set;}
+        public int NombreMatchGagnee { get;set;}
     }
 }

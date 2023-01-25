@@ -199,13 +199,13 @@ DROP VIEW IF EXISTS vTournoiFini CASCADE;
 DROP VIEW IF EXISTS vJoueurStat CASCADE;
 CREATE VIEW vJoueurStat AS 
 SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme, 
-sum(case when Kill.idTueur = joueur.id then 1 end) as nombreKill, 
-sum(case when Joueur_Agent_Manche.idJoueur = joueur.id then 1 end) as nombreMancheJouer,
-sum(case when vMancheFini.idVainqueur = joueur.idEquipe then 1 end) as nombreMancheGagnee
+COALESCE(sum(case when Kill.idTueur = joueur.id then 1 end),0) as nombreKill, 
+COALESCE(sum(case when Joueur_Agent_Manche.idJoueur = joueur.id then 1 end),0) as nombreMancheJouer,
+COALESCE(sum(case when vMancheFini.idVainqueur = joueur.idEquipe then 1 end),0) as nombreMancheGagnee
 FROM joueur
-INNER JOIN Kill on joueur.id = kill.idTueur
-INNER JOIN Joueur_Agent_Manche on Joueur_Agent_Manche.idJoueur = joueur.id
-INNER JOIN vMancheFini on joueur.idEquipe = vMancheFini.idVainqueur
+LEFT JOIN Kill on joueur.id = kill.idTueur
+LEFT JOIN Joueur_Agent_Manche on Joueur_Agent_Manche.idJoueur = joueur.id
+LEFT JOIN vMancheFini on joueur.idEquipe = vMancheFini.idVainqueur
 GROUP BY joueur.id;
 
 DROP VIEW IF EXISTS vJoueurAgent CASCADE;
@@ -213,26 +213,26 @@ CREATE VIEW vJoueurAgent AS
 SELECT joueur.id as idJoueur, agent.id as idAgent, agent.nom agentNom, count(Joueur_Agent_Manche.noManche) nombreFoisJouer
 FROM joueur
 LEFT JOIN Joueur_Agent_Manche on joueur.id = Joueur_Agent_Manche.idJoueur
-RIGHT JOIN Agent on Joueur_Agent_Manche.idAgent = Agent.id
+CROSS JOIN Agent on Joueur_Agent_Manche.idAgent = Agent.id
 GROUP BY Agent.id,Joueur.id;
 
 DROP VIEW IF EXISTS vEquipeStat CASCADE;
 CREATE VIEW vEquipeStat AS 
 SELECT equipe.id, equipe.nom, 
-sum(case when Tournoi_Equipe.idEquipe = equipe.id then 1 end) as nombreTournoiJouer,
-sum(case when (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id) then 1 end) as nombreMatchJouer,
-sum(case when vMatchFini.idVainqueur = equipe.id then 1 end) as nombreMatchGagnee
+COALESCE(sum(case when Tournoi_Equipe.idEquipe = equipe.id then 1 end),0) as nombreTournoiJouer,
+COALESCE(sum(case when (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id) then 1 end),0) as nombreMatchJouer,
+COALESCE(sum(case when vMatchFini.idVainqueur = equipe.id then 1 end),0) as nombreMatchGagnee
 FROM equipe
-INNER JOIN Tournoi_Equipe on Tournoi_Equipe.idEquipe = equipe.id
-INNER JOIN match on (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id)
-INNER JOIN vMatchFini on vMatchFini.idVainqueur = equipe.id
+LEFT JOIN Tournoi_Equipe on Tournoi_Equipe.idEquipe = equipe.id
+LEFT JOIN match on (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id)
+LEFT JOIN vMatchFini on vMatchFini.idVainqueur = equipe.id
 GROUP BY equipe.id;
 
 DROP VIEW IF EXISTS vArmeStat CASCADE;
 CREATE VIEW vArmeStat AS
 SELECT arme.*, count(nokill) nombreKills
 FROM arme 
-INNER JOIN kill on arme.id = kill.idArme
+LEFT JOIN kill on arme.id = kill.idArme
 group by arme.id;
 
 DROP VIEW IF EXISTS vAgentStat CASCADE;
