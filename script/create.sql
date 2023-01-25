@@ -55,7 +55,7 @@ CREATE TABLE Joueur(
 	CONSTRAINT PK_Joueur PRIMARY KEY (id),
 	CONSTRAINT FK_Joueur_idPays FOREIGN KEY (idPays) REFERENCES Pays(id) ON DELETE CASCADE,
 	CONSTRAINT FK_Joueur_idEquipe FOREIGN KEY (idEquipe) REFERENCES Equipe(id) ON DELETE CASCADE,
-	CONSTRAINT salaire_check CHECK (salaire > 0)
+	CONSTRAINT salaire_check CHECK (salaire >= 0)
 );
 
 DROP TABLE IF EXISTS Tournoi CASCADE;
@@ -153,25 +153,25 @@ CREATE TABLE Joueur_Agent_Manche(
 	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche,idAgent)
 );
 
-DROP VIEW IF EXISTS vEquipeActive;
+DROP VIEW IF EXISTS vEquipeActive CASCADE;
 CREATE VIEW vEquipeActive AS 
 SELECT equipe.* FROM equipe 
 INNER JOIN joueur ON equipe.id = joueur.idEquipe
 GROUP BY equipe.id
 HAVING count(joueur.id) = 5;
 
-DROP VIEW IF EXISTS vRoundFini;
+DROP VIEW IF EXISTS vRoundFini CASCADE;
 CREATE VIEW vRoundFini AS
-SELECT round.idTournoi idTournoi, round.noMatch noMatch, round.noManche noManche, equipe.id idVainqueur
+SELECT round.idTournoi idTournoi, round.noMatch noMatch, round.noManche noManche,round.noRound noRound, equipe.id idVainqueur
 FROM round 
 INNER JOIN match on (match.idTournoi,match.noMatch) = (round.idTournoi, round.noMatch)
 INNER JOIN kill on (round.idTournoi, round.noMatch, round.noManche, round.noRound) = (kill.idTournoi, kill.noMatch, kill.noManche, kill.noRound)
 INNER JOIN joueur on kill.idTueur = joueur.id
 INNER JOIN equipe on joueur.idEquipe = equipe.id
-GROUP BY round.idtournoi, round.nomatch, round.nomanche, equipe.id
+GROUP BY round.idtournoi, round.nomatch, round.nomanche, round.noround, equipe.id
 HAVING count(*) = 5;
 
-DROP VIEW IF EXISTS vMancheFini;
+DROP VIEW IF EXISTS vMancheFini CASCADE;
 CREATE VIEW vMancheFini AS
 SELECT manche.idTournoi, manche.noMatch, manche.noManche, vRoundFini.idVainqueur idVainqueur
 FROM manche 
@@ -180,7 +180,7 @@ INNER JOIN vRoundFini on (manche.idTournoi, manche.noMatch, manche.noManche) = (
 GROUP BY manche.idTournoi, manche.noMatch, manche.noManche, vRoundFini.idVainqueur
 HAVING count(*) = 13;
 
-DROP VIEW IF EXISTS vMatchFini;
+DROP VIEW IF EXISTS vMatchFini CASCADE;
 CREATE VIEW vMatchFini AS
 SELECT match.idTournoi, match.noMatch, vMancheFini.idVainqueur idVainqueur
 FROM Match
@@ -188,216 +188,59 @@ INNER JOIN vMancheFini ON (match.idTournoi, match.noMatch) = (vMancheFini.idTour
 GROUP BY match.idTournoi, match.noMatch, vMancheFini.idVainqueur
 HAVING count(*) = 
 CASE
-WHEN match.gameFormat = 'bo1' THEN 1
-WHEN match.gameFormat = 'bo3' THEN 2
-WHEN match.gameFormat = 'bo5' THEN 3
+	WHEN match.gameFormat = 'bo1' THEN 1
+	WHEN match.gameFormat = 'bo3' THEN 2
+	WHEN match.gameFormat = 'bo5' THEN 3
+END;
 END;
 
-DROP VIEW IF EXISTS vJoueurStat;
+DROP VIEW IF EXISTS vTournoiFini CASCADE;
+
+DROP VIEW IF EXISTS vJoueurStat CASCADE;
 CREATE VIEW vJoueurStat AS 
-SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme
+SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme, 
+sum(case when Kill.idTueur = joueur.id then 1 end) as nombreKill, 
+sum(case when Joueur_Agent_Manche.idJoueur = joueur.id then 1 end) as nombreMancheJouer,
+sum(case when vMancheFini.idVainqueur = joueur.idEquipe then 1 end) as nombreMancheGagnee
 FROM joueur
+INNER JOIN Kill on joueur.id = kill.idTueur
+INNER JOIN Joueur_Agent_Manche on Joueur_Agent_Manche.idJoueur = joueur.id
+INNER JOIN vMancheFini on joueur.idEquipe = vMancheFini.idVainqueur
+GROUP BY joueur.id;
 
+DROP VIEW IF EXISTS vJoueurAgent CASCADE;
+CREATE VIEW vJoueurAgent AS
+SELECT joueur.id as idJoueur, agent.id as idAgent, agent.nom agentNom, count(Joueur_Agent_Manche.noManche) nombreFoisJouer
+FROM joueur
+LEFT JOIN Joueur_Agent_Manche on joueur.id = Joueur_Agent_Manche.idJoueur
+RIGHT JOIN Agent on Joueur_Agent_Manche.idAgent = Agent.id
+GROUP BY Agent.id,Joueur.id;
 
--- fonction triggers pour manche
-CREATE OR REPLACE FUNCTION checkNumberManche() RETURNS TRIGGER AS 
-$BODY$
-DECLARE 
-	bo SMALLINT;
-	count SMALLINT;
-	gameFormat match.gameformat%type;
-BEGIN
-	SELECT gameFormat FROM Match
-	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
-	INTO gameFormat;
-	CASE 
-		WHEN gameFormat = 'bo1' THEN bo = 1;
-		WHEN gameFormat = 'bo3' THEN bo = 3;
-		WHEN gameFormat = 'bo5' THEN bo = 5;
-	END CASE;
-	SELECT COUNT(noManche) FROM Manche
-	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
-	INTO count;
-	IF (count > bo) THEN 
-		ROLLBACK;
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
+DROP VIEW IF EXISTS vEquipeStat CASCADE;
+CREATE VIEW vEquipeStat AS 
+SELECT equipe.id, equipe.nom, 
+sum(case when Tournoi_Equipe.idEquipe = equipe.id then 1 end) as nombreTournoiJouer,
+sum(case when (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id) then 1 end) as nombreMatchJouer,
+sum(case when vMatchFini.idVainqueur = equipe.id then 1 end) as nombreMatchGagnee
+FROM equipe
+INNER JOIN Tournoi_Equipe on Tournoi_Equipe.idEquipe = equipe.id
+INNER JOIN match on (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id)
+INNER JOIN vMatchFini on vMatchFini.idVainqueur = equipe.id
+GROUP BY equipe.id;
 
-CREATE OR REPLACE FUNCTION checkSameCarte() RETURNS TRIGGER
-AS $BODY$
+DROP VIEW IF EXISTS vArmeStat CASCADE;
+CREATE VIEW vArmeStat AS
+SELECT arme.*, count(nokill) nombreKills
+FROM arme 
+INNER JOIN kill on arme.id = kill.idArme
+group by arme.id;
 
-DECLARE 
-	count_carte SMALLINT;
-BEGIN 
-	SELECT count(noManche) FROM manche
-	WHERE (idTournoi, noMatch) = (new.idTournoi, new.noMatch) AND idCarte = new.idCarte
-	INTO count_carte;
-	if(count_carte > 1) then 
-		ROLLBACK;
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION checkMancheIsOver() RETURNS TRIGGER
-AS $BODY$
-
-DECLARE 
-	count SMALLINT;
-BEGIN 
-	SELECT COUNT(idVainqueur) FROM vMancheFini 
-	WHERE (vMancheFini.idTournoi,vMancheFini.noMatch,vMancheFini.noManche) = (NEW.idtournoi,NEW.noMatch,NEW.noManche)
-	GROUP BY vMancheFini.idTournoi,vMancheFini.noMatch,vMancheFini.noManche
-	INTO count;
-	IF(count > 0) THEN 
-		ROLLBACK;
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
--- fonction qui regroupe les triggers de manche
-CREATE OR REPLACE FUNCTION triggersAfterManche() RETURNS TRIGGER 
-AS $BODY$
-
-BEGIN
-	PERFORM checkNumberManche();
-	PERFORM checkSameCarte();
-	PERFORM checkMancheIsOver();
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
--- trigger de manche
-CREATE OR REPLACE TRIGGER afterInsertManche AFTER INSERT on Manche 
-FOR EACH ROW
-EXECUTE PROCEDURE triggersAfterManche();
-
--- fonction trigger de match
-CREATE OR REPLACE FUNCTION checkMatchDate() RETURNS TRIGGER AS
-$BODY$
-DECLARE 
-	dateDebut tournoi.datedebut%type;
-	dateFin tournoi.datefin%type;
-
-BEGIN
-	SELECT dateDebut, dateFin FROM Tournoi
-	WHERE tournoi.id = NEW.idTournoi
-	INTO dateDebut,dateFin;
-	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
-		THEN ROLLBACK;
-	ELSE 
-
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION checkMatchIsOver() RETURNS TRIGGER
-AS $BODY$
-
-DECLARE 
-	count SMALLINT;
-BEGIN 
-	SELECT COUNT(idVainqueur) FROM vMatchFini 
-	WHERE (vMatchFini.idTournoi,vMatchFini.noMatch) = (NEW.idtournoi,NEW.noMatch)
-	GROUP BY vMancheFini.idTournoi,vMancheFini.noManche
-	INTO count;
-	IF(count > 0) THEN 
-		ROLLBACK;
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
--- fonction qui lance toute les fonctions trigger de match
-CREATE OR REPLACE FUNCTION triggersAfterMatch() RETURNS TRIGGER 
-AS $BODY$
-
-BEGIN
-	PERFORM checkMatchDate();
-	PERFORM checkMatchIsOver();
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
--- trigger de match
-CREATE OR REPLACE TRIGGER afterInsertMatch AFTER INSERT on match
-FOR EACH ROW
-EXECUTE PROCEDURE triggersAfterMatch();
-
--- fonction trigger de kill
-CREATE OR REPLACE FUNCTION checkKillSameTeam() RETURNS TRIGGER AS
-$BODY$
-
-BEGIN
-	IF((SELECT idEquipe FROM joueur where id = new.idTueur) = (SELECT idEquipe FROM Joueur WHERE id = new.idMort)) THEN 
-		raise exception 'Un joueur ne peux pas tuer un joueur de son équipe';
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION checkJoueurNotKilledTwice() RETURNS TRIGGER AS
-$BODY$
-
-DECLARE 
-	count SMALLINT;
-BEGIN
-	SELECT count(idTueur) 
-	FROM Kill 
-	WHERE (idtournoi,nomatch,nomanche,noround) = (new.idtournoi, new.nomatch, new.nomanche, new.noround) AND idMort = new.idMort
-	INTO count; 
-	IF(count = 2) THEN 
-		raise exception 'Le joueur a deja été tué!';
-	END IF;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION checkRoundIsOver() RETURNS TRIGGER AS 
-$BODY$
-DECLARE 
-	count SMALLINT;
-BEGIN 
-	SELECT COUNT(idVainqueur) FROM vRoundFini
-	WHERE (vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround) = (new.idtournoi,new.nomatch,new.nomanche,new.noround)
-	GROUP BY vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround
-	INTO count;
-	if(count > 0) THEN ROLLBACK; end if;
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
--- fonction qui lance les fonctions trigger de kill
-CREATE OR REPLACE FUNCTION triggersAfterAddKill() RETURNS TRIGGER
-AS $BODY$
-BEGIN
-	PERFORM checkKillSameTeam();
-	PERFORM checkJoueurNotKilledTwice();
-	PERFORM checkRoundIsOver();
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
--- trigger de kill
-CREATE OR REPLACE TRIGGER afterAddKill AFTER INSERT on Kill
-FOR EACH ROW 
-EXECUTE PROCEDURE triggersAfterAddKill();
-
---fonction trigger de round
-
---fonction qui regroupe les fonction trigger de round
-CREATE OR REPLACE FUNCTION triggersAfterAddRound() RETURNS TRIGGER
-AS $BODY$
-BEGIN 
-	PERFORM checkRoundIsOver();
-	RETURN NULL;
-END;
-$BODY$ LANGUAGE plpgsql;
-
---trigger de round
-CREATE OR REPLACE TRIGGER afterAddRound AFTER INSERT on round
-FOR EACH ROW
-EXECUTE PROCEDURE triggersAfterAddRound();
+DROP VIEW IF EXISTS vAgentStat CASCADE;
+CREATE VIEW vAgentStat AS
+SELECT agent.*,
+count(DISTINCT (Joueur_Agent_Manche.idTournoi, Joueur_Agent_Manche.noMatch, Joueur_Agent_Manche.noManche, Joueur_Agent_Manche.idJoueur)) as nombreFoisJouer,
+count(kill.idMort) as nombreDeKill
+FROM agent 
+INNER JOIN Joueur_Agent_Manche on agent.id = Joueur_Agent_Manche.idAgent
+INNER JOIN Kill on (Joueur_Agent_Manche.idTournoi, Joueur_Agent_Manche.noMatch, Joueur_Agent_Manche.noManche, Joueur_Agent_Manche.idJoueur) = (Kill.idTournoi, Kill.noMatch, Kill.noManche, Kill.idTueur)
+GROUP BY Agent.id;

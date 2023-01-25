@@ -18,6 +18,15 @@ namespace Projet_BDR.Context
         public DbSet<Pays> Pays { get; set; }
         public DbSet<Round> Round { get; set; }
         public DbSet<Tournoi> Tournoi { get; set; }
+        public DbSet<VAgentStat> VAgentStat { get; set; }
+        public DbSet<VArmeStat> VArmeStat { get; set; }
+        public DbSet<VEquipeActive> VEquipeActive { get; set; }
+        public DbSet<VEquipeStat> VEquipeStat { get; set; }
+        public DbSet<VJoueurAgent> VJoueurAgent { get; set; }
+        public DbSet<VJoueurStat> VJoueurStat { get; set; }
+        public DbSet<VMancheFini> VMancheFini { get; set; }        
+        public DbSet<VRoundFini> VRoundFini{ get; set; }        
+        public DbSet<VMatchFini> VMatchFini { get; set; }
 
         static ValoContext()  
         {

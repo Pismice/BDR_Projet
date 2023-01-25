@@ -7,6 +7,9 @@
     <a class="btn btn-primary" href="joueur/add">
         <span class="oi oi-plus"></span>
     </a>
+    <a class="btn btn-primary" href="joueur/stat">
+        Voir statistiques des joueurs
+    </a>
 </h3>
 <table class="table">
     <thead>
@@ -40,6 +43,7 @@
                     <td>@EquipeService.GetName((Int16)j.IdEquipe)</td>                    
                 }
                 <td>
+                    <a class="btn btn-light" href="joueur/@j.Id"><span class="oi oi-magnifying-glass"></span></a>
                     <a class="btn btn-light" href="joueur/update/@j.Id"><span class="oi oi-pencil"></span></a>
                     <a class="btn btn-danger" href="joueur/delete/@j.Id"><span class="oi oi-delete"></span></a>
                 </td>

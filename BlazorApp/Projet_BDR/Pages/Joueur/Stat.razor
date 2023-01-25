@@ -1,0 +1,70 @@
+﻿@page "/joueur/stat"
+@inject JoueurService JoueurService
+@inject EquipeService EquipeService
+@inject PaysService PaysService
+@inject NavigationManager NavigationManager
+
+<h3>Classement des joueurs selon leur statistiques</h3>
+<table class="table">
+        <thead>
+            <tr>
+                <th>Cl.</th>
+                <th>Pseudonyme</th>
+                <th @onclick=@((e) => FilterChangeClickEvent("nombrekill",e))>Nombre de kill</th>
+                <th @onclick=@((e) => FilterChangeClickEvent("nombremanchejouee",e))>Nombre de manche jouée</th>
+                <th @onclick=@((e) => FilterChangeClickEvent("nombremanchegagnee",e))>Nombre de manche gagnée</th>
+                <th>Pourcentage manche gagnée</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach(VJoueurStat v in vjs)
+        {
+            <tr>
+                <td>@(++count)</td>
+                <td>@v.Pseudonyme</td>
+                <td>@v.NombreKill</td>
+                <td>@v.NombreMancheJouer</td>
+                <td>@v.NombreMancheGagnee</td>
+                <td>@(@v.NombreMancheGagnee*100/@v.NombreMancheJouer)</td>
+            </tr>
+        }            
+        </tbody>
+    </table>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
+
+@code {
+    VJoueurStat[] vjs;
+    string f;
+    int count = 0;
+    string[] filters = { "nombrekill", "nombremanchejouer", "nombremanchegagnee" };
+
+    protected override void OnInitialized()
+    {
+        f = filters[0];
+        StatGet();
+    }
+
+    protected void StatGet()
+    {
+        count = 0;
+        vjs = JoueurService.GetAllVJoueurStats(f);
+    }
+
+    public void FilterChangeClickEvent(string filter, MouseEventArgs evnt)
+    {
+        f = filter;
+        StatGet();
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("joueur");
+    }
+}

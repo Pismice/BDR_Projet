@@ -40,6 +40,14 @@
         </tbody>
     </table>
 </form>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
 
 @code {
     int no;
@@ -55,6 +63,11 @@
     {
         no = 0; 
         equipes = EquipeService.GetClassement(r);
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
     }
 }
 

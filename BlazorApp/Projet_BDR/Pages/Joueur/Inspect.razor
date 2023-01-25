@@ -1,0 +1,114 @@
+﻿@page "/joueur/{id}"
+@inject JoueurService JoueurService
+@inject EquipeService EquipeService
+@inject PaysService PaysService
+@inject NavigationManager NavigationManager
+
+<h3>Information concernant le joueur @j.Prenom @j.Nom</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Pseudonyme</th>
+            <th>Date de naissance</th>
+            <th>Salaire</th>
+            <th>Pays</th>
+            <th>Equipe</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@j.Nom</td>
+            <td>@j.Prenom</td>
+            <td>@j.Pseudonyme</td>
+            <td>@j.DateNaissance</td>
+            <td>@j.Salaire</td>
+            <td>@PaysService.GetName(j.IdPays)</td>
+            @if (j.IdEquipe == null)
+            {
+                <td></td>
+            }
+            else
+            {
+                <td>@EquipeService.GetName((Int16)j.IdEquipe)</td>
+            }
+        </tr>
+    </tbody>
+</table>
+<br />
+@if(vjs == null)
+{
+    <h4>Pas de statistique diponible pour le joueur</h4>
+    <br />
+} 
+else
+{
+    <h4>Statistique du joueur</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre de kill</th>
+                <th>Nombre de manche jouée</th>
+                <th>Nombre de manche gagnée</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@vjs.NombreKill</td>
+                <td>@vjs.NombreMancheJouer</td>
+                <td>@vjs.NombreMancheGagnee</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+}
+
+
+<h4>Liste des agents favoris</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom agent</th>
+            <th>Nombre de fois jouer</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (VJoueurAgent v in vja)
+        {
+            <tr>
+                <td>@v.AgentNom</td>
+                <td>@v.NombreFoisJouer</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Joueur j = new Joueur();
+    VJoueurAgent[]? vja;
+    VJoueurStat vjs;
+
+    protected override void OnInitialized()
+    {        
+        j = JoueurService.GetById(Int16.Parse(id));
+        vja = JoueurService.GetVJoueurAgent(Int16.Parse(id));
+        vjs = JoueurService.GetVJoueurStat(Int16.Parse(id));
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("joueur");
+    }
+
+}

@@ -46,5 +46,28 @@ namespace Projet_BDR.Service
             FormattableString query = $"DELETE FROM joueur WHERE id = {id}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
+
+        public VJoueurAgent[]? GetVJoueurAgent(Int16 id)
+        {
+            FormattableString query = $"SELECT * FROM vjoueuragent WHERE idjoueur = {id} ORDER BY nombrefoisjouer DESC";
+            return _context.VJoueurAgent.FromSqlInterpolated(query).ToArray();
+        }
+
+        public VJoueurStat GetVJoueurStat(Int16 id)
+        {
+            FormattableString query = $"SELECT * FROM vjoueurstat WHERE id = {id}";
+            VJoueurStat[] vjs = _context.VJoueurStat.FromSqlInterpolated(query).ToArray();
+            if(vjs.Length == 0)
+            {
+                return null;
+            }
+            return vjs[0];
+        }
+
+        public VJoueurStat[]? GetAllVJoueurStats(String filter)
+        {
+            FormattableString query = $"SELECT * FROM vjoueurstat ORDER BY {filter} DESC";
+            return _context.VJoueurStat.FromSqlInterpolated(query).ToArray();
+        }
     }
 }
