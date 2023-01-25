@@ -1,0 +1,53 @@
+﻿@page "/equipe/stat"
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+
+<h3>Classement en fonction des statistiques des équipes</h3>
+<div class="col-md-8">
+    <label for="Region" class="control-label">Région</label>
+    <select form="Region" class="form-control" id="region" name="region" @bind="@filter" @onclick="@GetStat">
+        <option value="nombretournoijoueur">Nombre de tournois joués</option>
+        <option value="nombrematchjouer">Nombre de matchs joués</option>
+        <option value="nombrematchgagnee">Nombre de matchs gagnés</option>
+    </select>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cl.</th>
+            <th>Nom équipe</th>
+            <th>Nombre de tournois joués</th>
+            <th>Nombre de matchs joués</th>
+            <th>Nombre de matchs gagnés</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(VEquipeStat ves in stats)
+        {
+            <tr>
+                <th>@(++count)</th>
+                <th>@ves.Nom</th>
+                <th>@ves.NombreTournoiJouer</th>
+                <th>@ves.NombreMatchJouer</th>
+                <th>@ves.NombreMatchGagnee</th>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    VEquipeStat[] stats;
+    int count;
+    string filter;
+    protected override void OnInitialized()
+    {
+        filter = "nombretournoijoueur";
+        GetStat();
+    }
+
+    protected void GetStat()
+    {
+        count = 0;
+        stats = EquipeService.GetAllStat(filter);
+    }
+}

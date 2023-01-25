@@ -31,30 +31,24 @@
     </tbody>
 </table>
 <br />
-@if (ves == null)
-{
-    <h3>Aucune statistique disponible pour l'équipe</h3>
-}
-else
-{
-    <h3>Statistique de l'équipe</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre de tournois jouées</th>
-                <th>Nombre de matchs jouées</th>
-                <th>Nombre de matchs gagnées</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>@ves.NombreTournoiJouer</th>
-                <th>@ves.NombreMatchJouer</th>
-                <th>@ves.NombreMatchGagnee</th>
-            </tr>
-        </tbody>
-    </table>
-}
+
+<h3>Statistique de l'équipe</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre de tournois joués</th>
+            <th>Nombre de matchs jouées</th>
+            <th>Nombre de matchs gagnées</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>@ves.NombreTournoiJouer</th>
+            <th>@ves.NombreMatchJouer</th>
+            <th>@ves.NombreMatchGagnee</th>
+        </tr>
+    </tbody>
+</table>
 
 <div class="row">
     <div class="col-md-4">

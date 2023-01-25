@@ -52,6 +52,11 @@ namespace Projet_BDR.Service
             return _context.Equipe.FromSqlInterpolated(query).ToArray();
         }
 
+        public VEquipeStat[] GetAllStat(string filter)
+        {
+            FormattableString query = $"SELECT * FROM vequipestat ORDER BY {filter}";
+            return _context.VEquipeStat.FromSqlInterpolated(query).ToArray();
+        }
         public VEquipeStat GetStatById(Int16 id)
         {
             FormattableString query = $"SELECT * FROM vequipestat WHERE id = {id}";
