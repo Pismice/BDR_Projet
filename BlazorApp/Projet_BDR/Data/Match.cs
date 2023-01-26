@@ -16,5 +16,7 @@ namespace Projet_BDR.Data
         [Required]
         public DateTime GameDate { get; set; }
         public Int16? NoMatchSuivant { get; set; }
+        public Int16? IdEquipeGauche { get; set; }
+        public Int16? IdEquipeDroite { get; set; }
     }
 }

@@ -12,10 +12,46 @@
         </a>
     }
 </h3>
-<h4>Liste des équipes 
-    <a class="btn btn-primary" href="tournoi/@tournoi.Id/add_equipe">
-        Ajouter une équipe au tournoi
-    </a>    
+@if (hasStarted)
+{
+    <h3>
+        Liste des matchs
+        <a class="btn btn-primary" href="tournoi/@tournoi.Id/simulate">
+            <span class="oi oi-media-play"> Simulation</span>
+        </a>
+    </h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Numéro match</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VTournoiMatch m in matchs)
+            {
+                <tr>
+                    <th>@m.NoMatch</th>
+                    <th>@m.NomEquipeGauche vs @m.NomEquipeDroite</th>
+                    <th>
+                        <a class="btn btn-light" href="match/@id/@m.NoMatch">
+                            <span class="oi oi-magnifying-glass"></span>
+                        </a>
+                    </th>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+}
+<h4>Liste des équipes (Nb participant : @equipes.Length)
+    @if (!hasStarted)
+    {
+        <a class="btn btn-primary" href="tournoi/@tournoi.Id/add_equipe">
+            Ajouter une équipe au tournoi
+        </a>
+    }  
 </h4>
 <table class="table">
     <thead>
@@ -40,6 +76,7 @@
         }
     </tbody>
 </table>
+
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
@@ -53,12 +90,15 @@
     public string id { get; set; }
     Tournoi tournoi;
     Equipe[] equipes;
+    VTournoiMatch[] matchs;
     bool hasStarted;
     protected override void OnInitialized()
     {
         tournoi = TournoiService.GetById(Int16.Parse(id));
         equipes = TournoiService.GetEquipeFromTournoi(Int16.Parse(id));
-        hasStarted = TournoiService.GetAllMatch(Int16.Parse(id)).Length != 0;
+
+        matchs = TournoiService.GetAllVMatch(Int16.Parse(id));
+        hasStarted = matchs.Length != 0;
     }
     protected void End()
     {

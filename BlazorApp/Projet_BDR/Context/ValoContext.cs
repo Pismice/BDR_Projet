@@ -27,6 +27,8 @@ namespace Projet_BDR.Context
         public DbSet<VMancheFini> VMancheFini { get; set; }        
         public DbSet<VRoundFini> VRoundFini{ get; set; }        
         public DbSet<VMatchFini> VMatchFini { get; set; }
+        public DbSet<VTournoiMatch> VTournoiMatch { get; set; }
+        public DbSet<DbInt> Int { get; set; }
 
         static ValoContext()  
         {

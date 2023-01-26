@@ -70,12 +70,63 @@ namespace Projet_BDR.Service
             return _context.Match.FromSqlInterpolated(query).ToArray();
         }
 
+        public VTournoiMatch[] GetAllVMatch(Int16 idTournoi)
+        {
+            FormattableString query = $"SELECT * FROM vtournoimatch WHERE idTournoi = {idTournoi}";
+            return _context.VTournoiMatch.FromSqlInterpolated(query).ToArray();
+        }
+
         public void UpdateMatch(Int16 idTournoi, Int16 noMatch, Int16 idEquipeGauche, Int16 idEquipeDroite)
         {
             FormattableString query = $"UPDATE match SET idequipegauche = {idEquipeGauche}, idequipedroite = {idEquipeDroite} WHERE idtournoi = {idTournoi} and noMatch = {noMatch}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
         
+        public VMatchFini? GetVMatchFini(Int16 idTournoi, Int16 noMatch)
+        {
+            FormattableString query = $"SELECT * FROM vmatchfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch}";
+            VMatchFini[]? v = _context.VMatchFini.FromSqlInterpolated(query).ToArray();
+            if (v.Length == 0)
+            {
+                return null;
+            }
+            return v[0];
+        }
+
+        public VMancheFini[]? GetVMancheFinis(Int16 idTournoi, Int16 noMatch)
+        {
+            FormattableString query = $"SELECT * FROM vmanchefini WHERE idtournoi = {idTournoi} and nomatch = {noMatch}";
+            return _context.VMancheFini.FromSqlInterpolated(query).ToArray();
+        }
+
+        public Match GetMatch(Int16 idTournoi, Int16 noMatch)
+        {
+            FormattableString query = $"SELECT * FROM match WHERE idtournoi = {idTournoi} and nomatch = {noMatch}";
+            return _context.Match.FromSqlInterpolated(query).ToArray()[0];
+        }
+        public VTournoiMatch GetVMatch(Int16 idTournoi, Int16 noMatch)
+        {
+            FormattableString query = $"SELECT * FROM vtournoimatch WHERE idtournoi = {idTournoi} and nomatch = {noMatch}";
+            return _context.VTournoiMatch.FromSqlInterpolated(query).ToArray()[0];
+        }
+
+        public int GetScoreMatch(Int16 idTournoi, Int16 noMatch,Int16? idEquipe)
+        {
+            FormattableString query = $"SELECT count(*) as value FROM vmanchefini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and idvainqueur = {idEquipe}";
+            return _context.Int.FromSql(query).ToArray()[0].value;            
+        }
+
+        public int GetScoreManche(Int16 idTournoi, Int16 noMatch,Int16 noManche, Int16? idEquipe)
+        {
+            FormattableString query = $"SELECT count(*) as value FROM vroundfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and nomanche = {noManche} and idvainqueur = {idEquipe}";
+            return _context.Int.FromSql(query).ToArray()[0].value;
+        }
+
+        public VRoundFini[]? GetRoundManche(Int16 idTournoi, Int16 noMatch, Int16 noManche)
+        {
+            FormattableString query = $"SELECT * FROM vroundfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and nomanche = {noManche}";
+            return _context.VRoundFini.FromSql(query).ToArray();
+        }
     }
 
 }

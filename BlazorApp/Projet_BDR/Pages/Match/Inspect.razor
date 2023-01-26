@@ -1,0 +1,63 @@
+﻿@page "/match/{idtournoi}/{nomatch}"
+@inject TournoiService TournoiService
+@inject NavigationManager NavigationManager
+<h3>Information sur le Match #@NoMatch du Tournoi @t.Nom</h3>
+<h4>Score : @vTournoiMatch.NomEquipeGauche @TournoiService.GetScoreMatch(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),@m.IdEquipeGauche) - @TournoiService.GetScoreMatch(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),@m.IdEquipeDroite) @vTournoiMatch.NomEquipeDroite</h4>
+<h4>Détails des manches</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Numéro manche</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(VMancheFini v in vMancheFinis)
+        {
+            <tr>@v.NoManche</tr>
+            <tr>@vTournoiMatch.NomEquipeGauche @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeGauche) - @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeDroite) @vTournoiMatch.NomEquipeDroite</tr>
+            <th>
+                <a class="btn btn-light" href="manche/@IdTournoi/@NoMatch/@v.NoManche">
+                    <span class="oi oi-magnifying-glass"></span>
+                </a>
+            </th>
+        }
+    </tbody>
+</table>
+
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string IdTournoi { get; set; }
+    [Parameter]
+    public string NoMatch { get; set; }
+    Tournoi t;
+    Match m;
+    VTournoiMatch vTournoiMatch;
+    VMatchFini? vMatchFini;
+    VMancheFini[] vMancheFinis;
+    int scoreG, scoreD;
+
+    protected override void OnInitialized()
+    {
+        t = TournoiService.GetById(Int16.Parse(IdTournoi));
+        m = TournoiService.GetMatch(Int16.Parse(IdTournoi), Int16.Parse(NoMatch));
+        vTournoiMatch = TournoiService.GetVMatch(Int16.Parse(IdTournoi), Int16.Parse(NoMatch));
+        vMatchFini = TournoiService.GetVMatchFini(Int16.Parse(IdTournoi), Int16.Parse(NoMatch));
+        vMancheFinis = TournoiService.GetVMancheFinis(Int16.Parse(IdTournoi), Int16.Parse(NoMatch));
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("/tournoi/" + IdTournoi);
+    }
+}

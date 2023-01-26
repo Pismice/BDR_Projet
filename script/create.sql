@@ -9,7 +9,7 @@ CREATE TYPE GAME_FORMAT AS ENUM ('bo1','bo3','bo5');
 
 DROP DOMAIN IF EXISTS NAME_FORMAT CASCADE;
 CREATE DOMAIN NAME_FORMAT VARCHAR(20) NOT NULL;
-
+--table
 DROP TABLE IF EXISTS Pays CASCADE;
 CREATE TABLE Pays(
 	id SMALLSERIAL,
@@ -152,7 +152,7 @@ CREATE TABLE Joueur_Agent_Manche(
 	CONSTRAINT FK_Joueur_Agent_Manche_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche) ON DELETE CASCADE,
 	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche,idAgent)
 );
-
+--Vue
 DROP VIEW IF EXISTS vEquipeActive CASCADE;
 CREATE VIEW vEquipeActive AS 
 SELECT equipe.* FROM equipe 
@@ -178,7 +178,8 @@ FROM manche
 INNER JOIN match on (match.idTournoi,match.noMatch) = (manche.idTournoi, manche.noMatch)
 INNER JOIN vRoundFini on (manche.idTournoi, manche.noMatch, manche.noManche) = (vRoundFini.idTournoi, vRoundFini.noMatch, vRoundFini.noManche)
 GROUP BY manche.idTournoi, manche.noMatch, manche.noManche, vRoundFini.idVainqueur
-HAVING count(*) = 13;
+HAVING count(*) = 13
+ORDER BY manche.idTournoi, manche.noMatch, manche.noManche;
 
 DROP VIEW IF EXISTS vMatchFini CASCADE;
 CREATE VIEW vMatchFini AS
@@ -191,8 +192,8 @@ CASE
 	WHEN match.gameFormat = 'bo1' THEN 1
 	WHEN match.gameFormat = 'bo3' THEN 2
 	WHEN match.gameFormat = 'bo5' THEN 3
-END;
-END;
+END
+ORDER BY match.idTournoi, match.noMatch;
 
 DROP VIEW IF EXISTS vTournoiFini CASCADE;
 
@@ -213,15 +214,15 @@ CREATE VIEW vJoueurAgent AS
 SELECT joueur.id as idJoueur, agent.id as idAgent, agent.nom agentNom, count(Joueur_Agent_Manche.noManche) nombreFoisJouer
 FROM joueur
 LEFT JOIN Joueur_Agent_Manche on joueur.id = Joueur_Agent_Manche.idJoueur
-CROSS JOIN Agent on Joueur_Agent_Manche.idAgent = Agent.id
+CROSS JOIN Agent 
 GROUP BY Agent.id,Joueur.id;
 
 DROP VIEW IF EXISTS vEquipeStat CASCADE;
 CREATE VIEW vEquipeStat AS 
 SELECT equipe.id, equipe.nom, 
-COALESCE(sum(case when Tournoi_Equipe.idEquipe = equipe.id then 1 end),0) as nombreTournoiJouer,
-COALESCE(sum(case when (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id) then 1 end),0) as nombreMatchJouer,
-COALESCE(sum(case when vMatchFini.idVainqueur = equipe.id then 1 end),0) as nombreMatchGagnee
+(SELECT Count(Distinct idtournoi) FROM tournoi_equipe where idequipe = equipe.id) as nombreTournoiJouer,
+(SELECT Count(Distinct (idtournoi,nomatch)) FROM match where idequipegauche = equipe.id or idequipedroite = equipe.id) as nombreMatchJouer,
+(SELECT COUNT(DISTINCT (idtournoi,nomatch)) FROM vmatchfini where idvainqueur = equipe.id) as nombreMatchGagnee
 FROM equipe
 LEFT JOIN Tournoi_Equipe on Tournoi_Equipe.idEquipe = equipe.id
 LEFT JOIN match on (match.idEquipeGauche = equipe.id or match.idEquipeDroite = equipe.id)
@@ -244,3 +245,16 @@ FROM agent
 INNER JOIN Joueur_Agent_Manche on agent.id = Joueur_Agent_Manche.idAgent
 INNER JOIN Kill on (Joueur_Agent_Manche.idTournoi, Joueur_Agent_Manche.noMatch, Joueur_Agent_Manche.noManche, Joueur_Agent_Manche.idJoueur) = (Kill.idTournoi, Kill.noMatch, Kill.noManche, Kill.idTueur)
 GROUP BY Agent.id;
+
+DROP VIEW IF EXISTS vTournoiMatch CASCADE;
+CREATE VIEW vTournoiMatch AS
+SELECT m1.idtournoi, m1.nomatch, m1.idEquipeGauche, m1.idEquipeDroite,
+CASE WHEN m1.idEquipeGauche IS NOT NULL 
+THEN (SELECT equipe.nom FROM equipe WHERE id = m1.idEquipeGauche) 
+ELSE CONCAT('Vainqueur #',(SELECT m2.nomatch from match m2 WHERE m2.noMatchSuivant = m1.nomatch GROUP BY m2.nomatch  HAVING m2.nomatch <= all(SELECT nomatch from match m3 where m3.noMatchSuivant = m1.nomatch)))
+END AS nomEquipeGauche,
+CASE WHEN m1.idEquipeDroite IS NOT NULL 
+THEN (SELECT equipe.nom FROM equipe WHERE id = m1.idEquipeDroite) 
+ELSE CONCAT('Vainqueur #',(SELECT m2.nomatch from match m2 WHERE m2.noMatchSuivant = m1.nomatch GROUP BY m2.nomatch HAVING m2.nomatch >= all(SELECT nomatch from match m3 where m3.noMatchSuivant = m1.nomatch)))
+END AS nomEquipeDroite
+FROM match m1 ORDER BY m1.idtournoi,m1.noMatch;

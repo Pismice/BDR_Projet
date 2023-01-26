@@ -29,7 +29,10 @@
                     <td>@t.DateFin</td>
                     <td>
                         <a class="btn btn-light" href="tournoi/@t.Id"><span class="oi oi-magnifying-glass"></span></a>
-                        <a class="btn btn-light" href="tournoi/update/@t.Id"><span class="oi oi-pencil"></span></a>
+                        @if (TournoiService.GetAllVMatch(@t.Id).Length == 0)
+                        {
+                            <a class="btn btn-light" href="tournoi/update/@t.Id"><span class="oi oi-pencil"></span></a>                        
+                        }
                         <a class="btn btn-danger" href="tournoi/delete/@t.Id"><span class="oi oi-delete"></span></a>
                     </td>
                 </tr>

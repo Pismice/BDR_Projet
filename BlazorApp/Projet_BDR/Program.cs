@@ -6,6 +6,7 @@ using Npgsql;
 using Projet_BDR.Context;
 using Projet_BDR.Data;
 using Projet_BDR.Service;
+using Projet_BDR.Pages;
 
 var builder = WebApplication.CreateBuilder(args);
 

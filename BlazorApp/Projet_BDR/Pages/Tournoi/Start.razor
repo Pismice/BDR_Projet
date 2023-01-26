@@ -2,7 +2,36 @@
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
 
-<h3>Start</h3>
+@if (canStart())
+{
+    <h3>Êtes vous sure de vouloir générer les matchs pour le tournoi @t.Nom ?</h3>
+    <h4>Vous ne pourrez plus modifier le tournoi après le démarrage</h4>
+    <select @bind="@format" class="form-control" id="format" name="format">
+        <option value="@GameFormat.BO1">@GameFormat.BO1</option>
+        <option value="@GameFormat.BO3">@GameFormat.BO3</option>
+        <option value="@GameFormat.BO5">@GameFormat.BO5</option>
+    </select>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@AcceptStart" value="Oui" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Anuuler" />
+            </div>
+        </div>
+    </div>
+} 
+else
+{
+    <h3>Vous ne pouvez pas lancer la génération des matchs</h3>    
+    <h4>Il faut que le nombre de participant soit une puissance de 2 pour pouvoir lancer.</h4>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -17,13 +46,23 @@
     {
         t = TournoiService.GetById(Int16.Parse(id));
         hasAlreadyStarted = TournoiService.GetAllMatch(Int16.Parse(id)).Length != 0;
-        nombre_participant = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).Length;
+        nombre_participant = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).Length;        
+    }
+
+    public void AcceptStart()
+    {
         if (canStart())
         {
             equipes = TournoiService.GetEquipeFromTournoi(Int16.Parse(id)).ToList();
             initMatch();
             assignMatch();
+            End();
         }
+    }
+
+    public void End()
+    {
+        NavigationManager.NavigateTo("/tournoi/" + id);
     }
 
     public bool canStart()

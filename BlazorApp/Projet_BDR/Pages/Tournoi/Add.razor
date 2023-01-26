@@ -39,7 +39,11 @@
 </form>
 @code {
     Tournoi tournoi = new Tournoi();
-
+    protected override void OnInitialized()
+    {
+        tournoi.DateDebut = DateOnly.FromDateTime(DateTime.Now);
+        tournoi.DateFin = DateOnly.FromDateTime(DateTime.Now);
+    }
     protected void AddTournoi()
     {
         TournoiService.Add(tournoi);

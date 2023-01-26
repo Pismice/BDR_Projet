@@ -25,7 +25,11 @@
                 <td>@v.NombreKill</td>
                 <td>@v.NombreMancheJouer</td>
                 <td>@v.NombreMancheGagnee</td>
-                <td>@(@v.NombreMancheGagnee*100/@v.NombreMancheJouer)</td>
+                <td>@if (v.NombreMancheJouer != 0)
+                    {
+                        @(@v.NombreMancheGagnee * 100 / @v.NombreMancheJouer)
+                    }%
+                </td>
             </tr>
         }            
         </tbody>

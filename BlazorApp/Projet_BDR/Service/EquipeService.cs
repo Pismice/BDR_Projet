@@ -54,7 +54,21 @@ namespace Projet_BDR.Service
 
         public VEquipeStat[] GetAllStat(string filter)
         {
-            FormattableString query = $"SELECT * FROM vequipestat ORDER BY {filter}";
+            FormattableString query;
+            switch (filter)
+            {
+                case "nombretournoijouer":
+                    query = $"SELECT * FROM vequipestat ORDER BY nombretournoijouer DESC";
+                    break;
+                case "nombrematchjouer":
+                    query = $"SELECT * FROM vequipestat ORDER BY nombrematchjouer DESC";
+                    break;
+                case "nombrematchgagnee":
+                    query = $"SELECT * FROM vequipestat ORDER BY nombrematchgagnee DESC";
+                    break;
+                default : return new VEquipeStat[0];
+            }
+            
             return _context.VEquipeStat.FromSqlInterpolated(query).ToArray();
         }
         public VEquipeStat GetStatById(Int16 id)

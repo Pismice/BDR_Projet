@@ -1,0 +1,55 @@
+﻿@page "/manche/{idtournoi}/{nomatch}/{nomanche}"
+@inject TournoiService TournoiService
+@inject EquipeService EquipeService
+@inject NavigationManager NavigationManager
+<h3>Détails manche #@NoManche du match #@NoManche du Tournoi @t.Nom</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Num. Round</th>
+            <th>Score</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (VRoundFini round in r)
+        {
+            <tr>
+                <th>@round.NoRound</th>
+                <th>@m.NomEquipeGauche @if (m.IdEquipeGauche == round.IdVainqueur) { @(1 - 0); }else{ @(0 - 1); } @m.NomEquipeDroite</th>
+                <th></th>
+            </tr>
+            
+        }
+    </tbody>
+</table>
+<br />
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <input type="button" class="btn btn-secondary" @onclick="@End" value="Retour" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string IdTournoi { get; set; }
+    [Parameter]
+    public string NoMatch { get; set; }
+    [Parameter]
+    public string NoManche { get; set; }
+    Tournoi t;
+    VTournoiMatch m;
+    VRoundFini[] r;
+    protected override void OnInitialized()
+    {
+        t = TournoiService.GetById(Int16.Parse(IdTournoi));
+        m = TournoiService.GetVMatch(Int16.Parse(IdTournoi), Int16.Parse(NoMatch));
+        r = TournoiService.GetRoundManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch), Int16.Parse(NoManche));
+    }
+    protected void End()
+    {
+        NavigationManager.NavigateTo("/match/"+IdTournoi+"/"+NoMatch);
+    }
+}
