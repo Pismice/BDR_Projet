@@ -4,13 +4,12 @@
 
 <h3>Classement en fonction des statistiques des équipes</h3>
 <div class="col-md-8">
-    <label for="Region" class="control-label">Région</label>
-    <select form="Region" class="form-control" id="region" name="region" @bind="@filter">
+    <label for="Region" class="control-label">Filtre</label>
+    <select form="Region" class="form-control" id="region" name="region" @bind="@filter" @onclick="GetStat">
         <option value="nombretournoijouer">Nombre de tournois joués</option>
         <option value="nombrematchjouer">Nombre de matchs joués</option>
         <option value="nombrematchgagnee">Nombre de matchs gagnés</option>
     </select>
-    <button class="btn btn-primary" @onclick="@GetStat">Changer le filtre</button>
 </div>
 <table class="table">
     <thead>

@@ -13,6 +13,11 @@ namespace Projet_BDR.Service
             _context = context;
         }
 
+        public Arme[] GetAll()
+        {
+            FormattableString query = $"SELECT * FROM arme";
+            return _context.Arme.FromSqlInterpolated(query).ToArray();
+        }
         public VArmeStat[]? GetVArmeStats()
         {
             FormattableString query = $"SELECT * FROM varmestat ORDER BY nombrekills DESC";

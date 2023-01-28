@@ -20,8 +20,16 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Arme/Index.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQXJtZVxJbmRleC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Add.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEFkZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Classement.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXENsYXNzZW1lbnQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Delete.razor]
@@ -34,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Inspect.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXEluc3BlY3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Stat.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXF1aXBlXFN0YXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Equipe/Update.razor]
@@ -52,8 +64,28 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEluZGV4LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXEluc3BlY3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Stat.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXFN0YXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Joueur/Update.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSm91ZXVyXFVwZGF0ZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Manche/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWFuY2hlXEluc3BlY3QucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Match/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTWF0Y2hcSW5zcGVjdC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Round/Inspect.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUm91bmRcSW5zcGVjdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Add.razor]
@@ -70,6 +102,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Inspect.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxJbnNwZWN0LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Start.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVG91cm5vaVxTdGFydC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/oscar/OneDrive/Bureau/HEIG/2eme/BDR/BDR_Projet/BlazorApp/Projet_BDR/Pages/Tournoi/Update.razor]

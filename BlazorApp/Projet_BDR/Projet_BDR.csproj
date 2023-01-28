@@ -7,12 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
 	<Folder Include="Pages\Agent\" />
 	<Folder Include="Pages\Carte\" />
-	<Folder Include="Pages\Manche\" />
-	<Folder Include="Pages\Match\" />
-	<Folder Include="Pages\Round\" />
   </ItemGroup>
 
   <ItemGroup>
