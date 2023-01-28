@@ -1,10 +1,12 @@
 ﻿@page "/tournoi/{id}"
 @inject EquipeService EquipeService
+@inject AgentService AgentService
 @inject ArmeService ArmeService
 @inject CarteService CarteService
 @inject PaysService PaysService
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JsRuntime
 
 <h3>Information du tournoi @tournoi.Nom 
     @if (!hasStarted)
@@ -18,12 +20,15 @@
 {
     <h3>
         Liste des matchs
-        <a class="btn btn-primary" @onclick="@SimulateOnce">
-            <span class="oi oi-media-play"> Simuler le prochain match</span>
-        </a>
-        <a class="btn btn-primary" @onclick="@SimulateAll">
-            <span class="oi oi-media-skip-forward"> Simuler tout les matchs</span>
-        </a>
+        @if (!TournoiService.IsTournoiDone(tournoi.Id))
+        {
+            <a class="btn btn-primary" @onclick="@SimulateOnce">
+                <span class="oi oi-media-play"> Simuler le prochain match</span>
+            </a>
+            <a class="btn btn-primary" @onclick="@SimulateAll">
+                <span class="oi oi-media-skip-forward"> Simuler tout les matchs</span>
+            </a>
+        }
     </h3>
     <table class="table">
         <thead>
@@ -121,6 +126,7 @@
         Int16 NoRound = 1;
         Int16 NoKill = 1;
         List<Carte> cartes = CarteService.GetAll().ToList();
+        Agent[] agents = AgentService.GetAll();
         Random rng= new Random();
         Joueur[] gauche = EquipeService.GetJoueurs((Int16)next.IdEquipeGauche);
         Joueur[] droite = EquipeService.GetJoueurs((Int16)next.IdEquipeDroite);
@@ -136,11 +142,28 @@
             manche.IdCarte = cManche.id;
             manche.IdTournoi = next.IdTournoi;
             manche.NoMatch = next.NoMatch;
-            manche.NoManche = NoManche;
-            NoManche++;
+            manche.NoManche = NoManche++;
             NoRound = 1;
 
             TournoiService.AddManche(manche);
+
+            // ajout des agents pour chaque équipe
+            List<Agent> agentG = new List<Agent>();
+            agentG.AddRange(agents);
+            List<Agent> agentD = new List<Agent>();
+            agentD.AddRange(agents);
+            foreach (Joueur j in gauche)
+            {
+                Agent a = agentG[rng.Next(agentG.Count)];
+                agentG.Remove(a);
+                TournoiService.AddJoueurAgentManche(j.Id, manche.IdTournoi, manche.NoMatch, manche.NoManche, a.Id);
+            }
+            foreach (Joueur j in droite)
+            {
+                Agent a = agentD[rng.Next(agentD.Count)];
+                agentG.Remove(a);
+                TournoiService.AddJoueurAgentManche(j.Id, manche.IdTournoi, manche.NoMatch, manche.NoManche, a.Id);
+            }
 
             // simuler la manche
             // tant que la manche est pas fini
@@ -151,8 +174,7 @@
                 round.IdTournoi = next.IdTournoi;
                 round.NoMatch = next.NoMatch;
                 round.NoManche = manche.NoManche;
-                round.NoRound = NoRound;
-                NoRound++;
+                round.NoRound = NoRound++;
                 NoKill = 1;
 
                 TournoiService.AddRound(round);
@@ -169,11 +191,10 @@
                     kill.NoMatch = round.NoMatch;
                     kill.NoManche = round.NoManche;
                     kill.NoRound = round.NoRound;
-                    kill.NoKill = NoKill;
-                    NoKill++;
+                    kill.NoKill = NoKill++;
                     Joueur tueur;
                     Joueur mort;
-                    if(rng.Next(1) == 0)
+                    if (rng.Next(2) == 0)
                     {
                         // kill pour l'équipe de gauche
                         tueur = g[rng.Next(g.Count)];
@@ -183,8 +204,8 @@
                     else
                     {
                         // kill pour l'équipe de droite
-                        tueur = d[rng.Next(g.Count)];
-                        mort = g[rng.Next(d.Count)];
+                        tueur = d[rng.Next(d.Count)];
+                        mort = g[rng.Next(g.Count)];
                         g.Remove(mort);
                     }
                     kill.IdTueur = tueur.Id;
@@ -194,11 +215,19 @@
                 }
             }
         }
+        TournoiService.MatchFini(next);
+        JsRuntime.InvokeVoidAsync("alert", "Le match " + next.NoMatch + " a fini de simuler");
+        
     }
 
     protected void SimulateAll()
     {
         // tant qu'il y a des match qui ne sont pas finis pour le tournoi
         // SimulateOnce()
+        while (!TournoiService.IsTournoiDone(Int16.Parse(id)))
+        {
+            SimulateOnce();
+        }
+        NavigationManager.NavigateTo("tournoi/" + id, true);
     }
 }

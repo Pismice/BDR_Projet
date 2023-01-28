@@ -16,7 +16,16 @@
         {
             <tr>
                 <th>@round.NoRound</th>
-                <th>@m.NomEquipeGauche @if (m.IdEquipeGauche == round.IdVainqueur) { @(1 - 0); }else{ @(0 - 1); } @m.NomEquipeDroite</th>
+                <th>@m.NomEquipeGauche 
+                    @if (m.IdEquipeGauche == round.IdVainqueur)
+                    {
+                        <span> 1 - 0 </span>
+                    }
+                    else
+                    {
+                        <span> 0 - 1 </span> 
+                    }
+                 @m.NomEquipeDroite</th>
                 <th></th>
             </tr>
             
@@ -41,7 +50,7 @@
     public string NoManche { get; set; }
     Tournoi t;
     VTournoiMatch m;
-    VRoundFini[] r;
+    VRoundFini[] r;    
     protected override void OnInitialized()
     {
         t = TournoiService.GetById(Int16.Parse(IdTournoi));

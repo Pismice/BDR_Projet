@@ -15,13 +15,16 @@
     <tbody>
         @foreach(VMancheFini v in vMancheFinis)
         {
-            <tr>@v.NoManche</tr>
-            <tr>@vTournoiMatch.NomEquipeGauche @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeGauche) - @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeDroite) @vTournoiMatch.NomEquipeDroite</tr>
-            <th>
-                <a class="btn btn-light" href="manche/@IdTournoi/@NoMatch/@v.NoManche">
-                    <span class="oi oi-magnifying-glass"></span>
-                </a>
-            </th>
+            <tr>
+                <th>@v.NoManche</th>
+                <th>@vTournoiMatch.NomEquipeGauche @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeGauche) - @TournoiService.GetScoreManche(Int16.Parse(IdTournoi), Int16.Parse(NoMatch),v.NoManche,@m.IdEquipeDroite) @vTournoiMatch.NomEquipeDroite</th>
+                <th>
+                    <a class="btn btn-light" href="manche/@IdTournoi/@NoMatch/@v.NoManche">
+                        <span class="oi oi-magnifying-glass"></span>
+                    </a>
+                </th>
+            </tr>
+                
         }
     </tbody>
 </table>

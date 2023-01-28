@@ -1,9 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using NpgsqlTypes;
 
 namespace Projet_BDR.Data
 {
-    public enum AgentType {Sentinelle,Controller, Duelliste, Initiateur}
+    public enum AgentType {
+        [PgName("Sentinelle")] Sentinelle,
+        [PgName("Controlleur")] Controlleur,
+        [PgName("Duelliste")] Duelliste,
+        [PgName("Initiateur")] Initiateur}
     public class Agent
     {
         [Key]

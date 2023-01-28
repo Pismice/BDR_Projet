@@ -23,6 +23,7 @@ builder.Services.AddScoped<MatchService>();
 builder.Services.AddScoped<MancheService>();
 builder.Services.AddScoped<RoundService>();
 builder.Services.AddScoped<CarteService>();
+builder.Services.AddScoped<AgentService>();
 
 
 var app = builder.Build();

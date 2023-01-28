@@ -64,7 +64,7 @@ namespace Projet_BDR.Service
             _context.Database.ExecuteSqlInterpolated(query);
         }
 
-        public Match[] GetAllMatch(Int16 idTournoi)
+        public Data.Match[] GetAllMatch(Int16 idTournoi)
         {
             FormattableString query = $"SELECT match.* FROM match WHERE idTournoi = {idTournoi};";
             return _context.Match.FromSqlInterpolated(query).ToArray();
@@ -124,7 +124,7 @@ namespace Projet_BDR.Service
 
         public VRoundFini[]? GetRoundManche(Int16 idTournoi, Int16 noMatch, Int16 noManche)
         {
-            FormattableString query = $"SELECT * FROM vroundfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and nomanche = {noManche};";
+            FormattableString query = $"SELECT * FROM vroundfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and nomanche = {noManche} ORDER BY noround ASC;";
             return _context.VRoundFini.FromSql(query).ToArray();
         }
 
@@ -150,6 +150,12 @@ namespace Projet_BDR.Service
             FormattableString query = $"SELECT * FROM vroundfini WHERE idtournoi = {idTournoi} and nomatch = {noMatch} and nomanche = {noManche} and noround = {noRound};";
             return _context.VRoundFini.FromSqlInterpolated(query).ToArray().Length == 1;
         }
+
+        public bool IsTournoiDone(Int16 idTournoi)
+        {
+            FormattableString query = $"SELECT * FROM vtournoifini WHERE id = {idTournoi};";
+            return _context.VTournoiFini.FromSqlInterpolated(query).ToArray().Length == 1;
+        }
         public void AddManche(Manche m)
         {
             FormattableString query = $"INSERT INTO manche (idtournoi,nomatch,nomanche,idcarte) VALUES ({m.IdTournoi},{m.NoMatch},{m.NoManche},{m.IdCarte});";
@@ -168,5 +174,16 @@ namespace Projet_BDR.Service
             _context.Database.ExecuteSqlInterpolated(query);
         }
 
+        public void MatchFini(Match m)
+        {
+            FormattableString query = $"SELECT matchfini({m.IdTournoi},{m.NoMatch});";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+
+        public void AddJoueurAgentManche(Int16 idJoueur, Int16 idTournoi, Int16 noMatch, Int16 noManche,Int16 idAgent)
+        {
+            FormattableString query = $"INSERT INTO joueur_agent_manche (idjoueur,idtournoi,nomatch,nomanche,idagent) VALUES ({idJoueur},{idTournoi},{noMatch},{noManche},{idAgent});";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
     }
 }
