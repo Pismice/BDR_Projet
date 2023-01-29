@@ -253,7 +253,7 @@ BEGIN
     WHERE joueur.idEquipe = new.idEquipe
     GROUP BY idEquipe
     INTO count_joueur;
-    IF(count_joueur > 5) 
+    IF(count_joueur = 5) 
 		THEN raise exception 'Il y a déjà 5 joueur dans cette équipe';
         ROLLBACK;    
 	END IF;
@@ -261,7 +261,46 @@ BEGIN
 END;
 $BODY$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION checkSiEquipeEntournoi() RETURNS TRIGGER
+AS $BODY$
+DECLARE 
+	count smallint;
+BEGIN
+	select count(tournoi_equipe.idtournoi) from tournoi_equipe
+	where tournoi_equipe.idtournoi not in (select id from vtournoifini)
+	AND tournoi_equipe.idequipe = 
+	CASE WHEN TG_OP = 'INSERT' THEN new.idequipe ELSE old.idequipe END
+	INTO count;
+	if(count > 0) 
+		THEN raise exception 'On ne peut pas modifier la liste des joueurs en cours de tournoi';
+		ROLLBACK;
+	END IF;
+	RETURN CASE WHEN TG_OP = 'DELETE' THEN old ELSE new END;
+END;  $BODY$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION checkSiEquipeEntournoiUpdate() RETURNS TRIGGER
+AS $BODY$
+DECLARE 
+	count smallint;
+BEGIN
+	select count(idtournoi) from tournoi_equipe
+	where tournoi_equipe.idtournoi not in (select id from vtournoifini)
+	AND tournoi_equipe.idequipe = new.idequipe or tournoi_equipe.idequipe = old.idequipe
+	GROUP BY tournoi_equipe.idequipe
+	INTO count;
+	if(count > 0) 
+		THEN raise exception 'On ne peut pas modifier la liste des joueurs en cours de tournoi';
+		ROLLBACK;
+	END IF;
+	RETURN NEW;
+END; $BODY$ LANGUAGE plpgsql;
 -- trigger de joueur
 CREATE OR REPLACE TRIGGER tgr_01_AfterAddUpdateJoueur BEFORE INSERT OR UPDATE on joueur
 FOR EACH ROW
 EXECUTE PROCEDURE checkNombreDeJoueurParEquipe();
+CREATE OR REPLACE TRIGGER tgr_02_AfterAddUpdateJoueur BEFORE INSERT OR DELETE on joueur
+FOR EACH ROW
+EXECUTE PROCEDURE checkSiEquipeEntournoi();
+CREATE OR REPLACE TRIGGER tgr_03_AfterAddUpdateJoueur BEFORE UPDATE on joueur
+FOR EACH ROW
+EXECUTE PROCEDURE checkSiEquipeEntournoiUpdate();
