@@ -204,7 +204,6 @@ inner join match on tournoi.id = match.idtournoi
 inner join vmatchfini on match.idtournoi = vmatchfini.idtournoi and match.nomatch = vmatchfini.nomatch
 where nomatchsuivant is null
 ORDER BY tournoi.id;
- 
 
 DROP VIEW IF EXISTS vJoueurStat CASCADE;
 CREATE VIEW vJoueurStat AS 
@@ -276,6 +275,13 @@ THEN (SELECT equipe.nom FROM equipe WHERE id = m1.idEquipeDroite)
 ELSE CONCAT('Vainqueur #',(SELECT m2.nomatch from match m2 WHERE m2.noMatchSuivant = m1.nomatch GROUP BY m2.nomatch HAVING m2.nomatch >= all(SELECT nomatch from match m3 where m3.noMatchSuivant = m1.nomatch)))
 END AS nomEquipeDroite
 FROM match m1 ORDER BY m1.idtournoi,m1.noMatch;
+
+DROP VIEW IF EXISTS vCarteStat;
+CREATE VIEW vCarteStat AS
+SELECT carte.*, count(manche.nomanche) as nombreDeFoisJouee
+FROM carte 
+INNER JOIN manche ON carte.id = manche.idCarte
+GROUP BY carte.id;
 
 -- fonction triggers pour manche
 CREATE OR REPLACE FUNCTION checkNumberManche() RETURNS TRIGGER AS 

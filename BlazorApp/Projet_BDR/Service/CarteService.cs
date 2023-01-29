@@ -17,5 +17,11 @@ namespace Projet_BDR.Service
             FormattableString query = $"SELECT * FROM carte";
             return _context.Carte.FromSqlInterpolated(query).ToArray();
         }
+
+        public VCarteStat[] GetVCarteStat()
+        {
+            FormattableString query = $"SELECT * FROM vcartestat order by nombredefoisjouee desc";
+            return _context.VCarteStat.FromSqlInterpolated(query).ToArray();
+        }
     }
 }

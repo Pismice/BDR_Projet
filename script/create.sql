@@ -276,3 +276,10 @@ THEN (SELECT equipe.nom FROM equipe WHERE id = m1.idEquipeDroite)
 ELSE CONCAT('Vainqueur #',(SELECT m2.nomatch from match m2 WHERE m2.noMatchSuivant = m1.nomatch GROUP BY m2.nomatch HAVING m2.nomatch >= all(SELECT nomatch from match m3 where m3.noMatchSuivant = m1.nomatch)))
 END AS nomEquipeDroite
 FROM match m1 ORDER BY m1.idtournoi,m1.noMatch;
+
+DROP VIEW IF EXISTS vCarteStat;
+CREATE VIEW vCarteStat AS
+SELECT carte.*, count(manche.nomanche) as nombreDeFoisJouee
+FROM carte 
+INNER JOIN manche ON carte.id = manche.idCarte
+GROUP BY carte.id;

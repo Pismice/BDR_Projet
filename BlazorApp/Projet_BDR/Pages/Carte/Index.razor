@@ -7,23 +7,24 @@
     <thead>
         <tr>
             <th>Nom de carte</th>
-            <th></th>
+            <th>Nombre de fois jouées</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (Carte c in cartes)
+        @foreach (VCarteStat c in cartes)
         {
             <tr>
                 <td>@c.nom</td>
+                <td>@c.NombreDeFoisJouee</td>
             </tr>
         }
     </tbody>
 </table>
 
 @code {
-    Carte[]? cartes;
+    VCarteStat[]? cartes;
     protected override void OnInitialized()
     {
-        cartes = CarteService.GetAll();    
+        cartes = CarteService.GetVCarteStat();    
     }
 }
