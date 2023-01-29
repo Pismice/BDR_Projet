@@ -5,15 +5,25 @@
 @inject NavigationManager NavigationManager
 
 <h3>Classement des joueurs selon leur statistiques</h3>
+<div class="col-md-8">
+    <label for="Region" class="control-label">Filtre</label>
+    <select form="Region" class="form-control" id="region" name="region" @bind="@f" @onclick="GetStat">
+        <option value="nombrekill">Nombre de kills</option>
+        <option value="nombremort">Nombre de morts</option>
+        <option value="nombremanchejouer">Nombre de manche jouées</option>
+        <option value="nombremanchegagnee">Nombre de manches gagnées</option>
+    </select>
+</div>
+
 <table class="table">
         <thead>
             <tr>
                 <th>Cl.</th>
                 <th>Pseudonyme</th>
-                <th @onclick=@((e) => FilterChangeClickEvent("nombrekill",e))>Nombre de kill</th>
-                <th @onclick=@((e) => FilterChangeClickEvent("nombremort",e))>Nombre de kill</th>
-                <th @onclick=@((e) => FilterChangeClickEvent("nombremanchejouee",e))>Nombre de manche jouée</th>
-                <th @onclick=@((e) => FilterChangeClickEvent("nombremanchegagnee",e))>Nombre de manche gagnée</th>
+                <th>Nombre de kills</th>
+                <th>Nombre de morts</th>
+                <th>Nombre de manche jouée</th>
+                <th>Nombre de manche gagnée</th>
                 <th>Pourcentage manche gagnée</th>
             </tr>
         </thead>
@@ -49,15 +59,15 @@
     VJoueurStat[] vjs;
     string f;
     int count = 0;
-    string[] filters = { "nombrekill","nombrekill", "nombremanchejouer", "nombremanchegagnee" };
+    string[] filters = { "nombrekill","nombremort", "nombremanchejouer", "nombremanchegagnee" };
 
     protected override void OnInitialized()
     {
         f = filters[0];
-        StatGet();
+        GetStat();
     }
 
-    protected void StatGet()
+    protected void GetStat()
     {
         count = 0;
         vjs = JoueurService.GetAllVJoueurStats(f);
@@ -66,7 +76,7 @@
     public void FilterChangeClickEvent(string filter, MouseEventArgs evnt)
     {
         f = filter;
-        StatGet();
+        GetStat();
     }
 
     protected void End()

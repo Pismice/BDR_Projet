@@ -141,23 +141,22 @@ AS $BODY$
 DECLARE 
 	count SMALLINT;
 BEGIN 
-	SELECT COUNT(idVainqueur) FROM vMatchFini 
-	WHERE (vMatchFini.idTournoi,vMatchFini.noMatch) = (NEW.idtournoi,NEW.noMatch)
-	GROUP BY vMatchFini.idTournoi,vMatchFini.noMatch
+	SELECT COUNT(idTueur) FROM kill 
+	WHERE kill.idTournoi = NEW.idtournoi
+	GROUP BY kill.idTournoi
 	INTO count;
 	IF(count > 0) THEN 
-		raise exception 'Le tournoi est fini!';
-		ROLLBACK;
-	
+		raise exception 'Le tournoi a déjà commencé on ne peut pas rajouter de match!';
+		ROLLBACK;	
 	END IF;
 	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 -- trigger de match
---CREATE OR REPLACE TRIGGER tgr_01_InsertMatch BEFORE INSERT on match
---FOR EACH ROW
---EXECUTE PROCEDURE checkCanAddMatch();
+CREATE OR REPLACE TRIGGER tgr_01_InsertMatch BEFORE INSERT on match
+FOR EACH ROW
+EXECUTE PROCEDURE checkCanAddMatch();
 CREATE OR REPLACE TRIGGER tgr_02_InsertMatch AFTER INSERT on match
 FOR EACH ROW
 EXECUTE PROCEDURE checkMatchDate();
