@@ -42,9 +42,57 @@ BEGIN
 END;
 $BODY$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION tournoiFini(idT tournoi.id%type) returns void
+AS $BODY$
+DECLARE 
+	point_total tournoi.point%type;
+	nombre_participant smallint;
 
+BEGIN 
+	SELECT point FROM tournoi WHERE id = idt INTO point_total;
+	SELECT COUNT(idequipe) from tournoi_equipe WHERE idtournoi = idt INTO nombre_participant;
+	IF(nombre_participant < 4) 
+	THEN 
+		-- il y a donc que 2 équipes dans le tournoi
+		UPDATE equipe set elo = elo + point_total where id = (select idvainqueur from vtournoifini where id = idt);
+	ELSE
+		-- il y a 4 ou + équipes dans le tournoi
+		UPDATE equipe set elo = elo + point_total/2 where id = (select idvainqueur from vtournoifini where id = idt);
+		WITH max_win as (
+		select count(*) as val
+			 from vmatchfini where idtournoi = idT 
+			 group by idtournoi,idvainqueur 
+			 having count(idvainqueur) >= 
+			 all(
+				 select count(*) 
+				 from vmatchfini 
+				 where idtournoi = idT
+				 group by idtournoi,idvainqueur
+		))
+		UPDATE equipe set elo = elo + point_total/4 where id = (select idvainqueur from vmatchfini 
+																where idtournoi = idT
+																group by idtournoi,idvainqueur
+																having count(*) = (select (val-1) from max_win));
+																WITH max_win as (
+		select count(*) as val
+			 from vmatchfini where idtournoi = idT 
+			 group by idtournoi,idvainqueur 
+			 having count(idvainqueur) >= 
+			 all(
+				 select count(*) 
+				 from vmatchfini 
+				 where idtournoi = idT
+				 group by idtournoi,idvainqueur
+		))
+		UPDATE equipe set elo = elo + point_total/8 where id in (select idvainqueur from vmatchfini 
+																where idtournoi = idT
+																group by idtournoi,idvainqueur
+																having count(*) = (select (val-2) from max_win));
 
-CREATE OR REPLACE FUNCTION matchFini(idT manche.idtournoi%type ,noM manche.nomatch%type) returns void
+	END IF;
+END; $BODY$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION matchFini(idT match.idtournoi%type ,noM match.nomatch%type) returns void
 AS $BODY$
 DECLARE 
 	nms match.noMatchSuivant%type;

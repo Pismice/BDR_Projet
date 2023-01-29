@@ -1,6 +1,7 @@
 ﻿@page "/tournoi/update/{id}"
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime 
 <PageTitle>Ajouter un nouveau tournoi</PageTitle>
 <form>
     <div class="row">
@@ -49,7 +50,14 @@
 
     protected void UpdateTournoi()
     {
-        TournoiService.Update(tournoi);
+        try
+        {
+            TournoiService.Update(tournoi);
+        } 
+        catch(Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
     protected void End()

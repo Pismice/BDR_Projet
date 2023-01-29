@@ -1,6 +1,7 @@
 ﻿@page "/tournoi/delete/{id}"
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <PageTitle>Suppréssion de tournoi</PageTitle>
 <form>
     <h3 class="control-label">Êtes-vous sûre de vouloir supprimer le tournoi @tournoi.Nom?</h3>
@@ -24,7 +25,14 @@
     }
     protected void Accept()
     {
-        TournoiService.Delete(Int16.Parse(id));
+        try
+        {
+            TournoiService.Delete(Int16.Parse(id));
+        }
+        catch (Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
 

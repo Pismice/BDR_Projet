@@ -6,7 +6,7 @@
 @inject PaysService PaysService
 @inject TournoiService TournoiService
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JsRuntime
+@inject IJSRuntime IJSRuntime
 
 <h3>Information du tournoi @tournoi.Nom 
     @if (!hasStarted)
@@ -216,8 +216,17 @@
             }
         }
         TournoiService.MatchFini(next);
-        JsRuntime.InvokeVoidAsync("alert", "Le match " + next.NoMatch + " a fini de simuler");
-        
+        IJSRuntime.InvokeVoidAsync("alert", "Le match " + next.NoMatch + " a fini de simuler");
+        try
+        {
+            TournoiService.GetNextMatch(Int16.Parse(id));
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            // ça veut dire qu'on a plus de match après celui ci => on a fini le tournoi
+            TournoiService.TournoiFini(Int16.Parse(id));
+            IJSRuntime.InvokeVoidAsync("alert", "Le tournoi a fini de simuler");
+        }
     }
 
     protected void SimulateAll()

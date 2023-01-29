@@ -1,6 +1,7 @@
 @page "/joueur/leaveteam/{id}"
 @inject JoueurService JoueurService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <PageTitle>Quitter l'équipe</PageTitle>
 <form>
     <h3 class="control-label">Êtes-vous sûre de vouloir supprimer le joueur @joueur.Prenom @joueur.Nom de cette équipe ?
@@ -25,7 +26,14 @@
     }
     protected void Accept()
     {
-        JoueurService.LeaveTeam(Int16.Parse(id));
+        try
+        {
+            JoueurService.LeaveTeam(Int16.Parse(id));
+        }
+        catch (Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
 

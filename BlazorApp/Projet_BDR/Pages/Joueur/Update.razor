@@ -3,6 +3,7 @@
 @inject EquipeService EquipeService
 @inject PaysService PaysService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <h3>Update</h3>
 <form>
 	<div class="row">
@@ -63,7 +64,14 @@
 
 	protected void UpdateJoueur()
 	{
-		JoueurService.Update(joueur);
+		try
+		{
+			JoueurService.Update(joueur);
+		}
+		catch (Exception e)
+		{
+			IJSRuntime.InvokeVoidAsync("alert", e.Message);
+		}
 		End();
 	}
 	protected void End()

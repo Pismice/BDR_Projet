@@ -3,6 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject JoueurService JoueurService
 @inject PaysService PaysService
+@inject IJSRuntime IJSRuntime
 <PageTitle>Modification d'une équipe</PageTitle>
 <form>
     <div class="row">
@@ -38,9 +39,6 @@
 <h3>Listes des joueurs
     <a class="btn btn-primary" href="joueur/freeplayers/@equipe.Id">
         <span class="oi oi-plus"></span>
-    </a>
-    <a class="btn btn-primary" href="joueur/stat">
-        Voir statistiques des joueurs (TODOO)
     </a>
 </h3>
 <table class="table">
@@ -95,7 +93,14 @@
     }
     protected void UpdateEquipe()
     {
-        EquipeService.Update(equipe);
+        try
+        {
+            EquipeService.Update(equipe);
+        }
+        catch(Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
 

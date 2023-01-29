@@ -1,6 +1,7 @@
 ﻿@page "/equipe/add"
 @inject EquipeService EquipeService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <PageTitle>Ajouter une nouvelle équipe</PageTitle>
 <form>
     <div class="row">
@@ -36,7 +37,14 @@
     protected void AddEquipe()
     {
         equipe.Elo = 1000;
-        EquipeService.Add(equipe);
+        try
+        {
+            EquipeService.Add(equipe);
+        }
+        catch(Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
     protected void End()

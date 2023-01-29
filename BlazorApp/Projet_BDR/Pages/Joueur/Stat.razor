@@ -3,6 +3,7 @@
 @inject EquipeService EquipeService
 @inject PaysService PaysService
 @inject NavigationManager NavigationManager
+@using System.Drawing
 
 <h3>Classement des joueurs selon leur statistiques</h3>
 <div class="col-md-8">
@@ -20,8 +21,9 @@
             <tr>
                 <th>Cl.</th>
                 <th>Pseudonyme</th>
-                <th>Nombre de kills</th>
-                <th>Nombre de morts</th>
+                <th>Nombre de kill</th>
+                <th>Nombre de mort</th>
+                <th>K/D</th>
                 <th>Nombre de manche jouée</th>
                 <th>Nombre de manche gagnée</th>
                 <th>Pourcentage manche gagnée</th>
@@ -31,16 +33,19 @@
         @foreach(VJoueurStat v in vjs)
         {
             <tr>
-                <td>@(++count)</td>
+                <td>@(
+                    ++count) 
+                </td>
                 <td>@v.Pseudonyme</td>
                 <td>@v.NombreKill</td>
                 <td>@v.NombreMort</td>
+                <td>@if (v.NombreMort == 0) { <span>0</span>}else{<span>@(String.Format("{0:0.##}",@v.NombreKill / (double)@v.NombreMort))</span>}</td>
                 <td>@v.NombreMancheJouer</td>
-                <td>@v.NombreMancheGagnee</td>
+                <td>@v.NombreMancheGagnee</td> 
                 <td>@if (v.NombreMancheJouer != 0)
                     {
                         @(@v.NombreMancheGagnee * 100 / @v.NombreMancheJouer)
-                    }%
+                    }else{<span>0</span>}%
                 </td>
             </tr>
         }            

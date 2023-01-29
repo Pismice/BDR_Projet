@@ -1,6 +1,7 @@
 ﻿@page "/equipe/delete/{id}"
 @inject EquipeService EquipeService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <PageTitle>Suppréssion de l'équipe : @equipe.Nom'</PageTitle>
 <form>
     <h3 class="control-label">Êtes-vous sûre de vouloir supprimer l'équipe @equipe.Nom?</h3>
@@ -24,7 +25,14 @@
     }
     protected void Accept()
     {
-        EquipeService.Delete(Int16.Parse(id));
+        try
+        {
+            EquipeService.Delete(Int16.Parse(id));
+        }
+        catch(Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
 

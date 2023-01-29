@@ -180,6 +180,12 @@ namespace Projet_BDR.Service
             _context.Database.ExecuteSqlInterpolated(query);
         }
 
+        public void TournoiFini(Int16 id)
+        {
+            FormattableString query = $"SELECT tournoifini({id});";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+
         public void AddJoueurAgentManche(Int16 idJoueur, Int16 idTournoi, Int16 noMatch, Int16 noManche,Int16 idAgent)
         {
             FormattableString query = $"INSERT INTO joueur_agent_manche (idjoueur,idtournoi,nomatch,nomanche,idagent) VALUES ({idJoueur},{idTournoi},{noMatch},{noManche},{idAgent});";

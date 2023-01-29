@@ -2,6 +2,7 @@
 @inject TournoiService TournoiService
 @inject EquipeService EquipeService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <PageTitle>Ajouter un nouveau tournoi</PageTitle>
 <form>
     <fieldset>
@@ -65,20 +66,28 @@
 
     protected void Update()
     {
-        foreach (Equipe e in equipes_initial_tournoi)
+        try
         {
-            if (!equipes_tournoi.Contains(e))
+            foreach (Equipe e in equipes_initial_tournoi)
             {
-                TournoiService.DeleteEquipe(tournoi, e);
+                if (!equipes_tournoi.Contains(e))
+                {
+                    TournoiService.DeleteEquipe(tournoi, e);
+                }
+            }
+            foreach (Equipe e in equipes_tournoi)
+            {
+                if (!equipes_initial_tournoi.Contains(e))
+                {
+                    TournoiService.AddEquipe(tournoi, e);
+                }
             }
         }
-        foreach (Equipe e in equipes_tournoi)
+        catch(Exception e)
         {
-            if (!equipes_initial_tournoi.Contains(e))
-            {
-                TournoiService.AddEquipe(tournoi, e);
-            }
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
         }
+       
         End();
     }
     protected void End()

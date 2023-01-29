@@ -2,6 +2,7 @@
 @inject JoueurService JoueurService
 @inject NavigationManager NavigationManager
 @inject EquipeService EquipeService
+@inject IJSRuntime IJSRuntime
 <PageTitle>Quitter l'équipe</PageTitle>
 <form>
     <h3 class="control-label">Êtes-vous sûre de vouloir ajouter le joueur @joueur.Prenom @joueur.Nom de cette équipe ?
@@ -31,7 +32,14 @@
     }
     protected void Accept()
     {
-        JoueurService.JoinTeam(Int16.Parse(idJ), Int16.Parse(idE));
+        try
+        {
+            JoueurService.JoinTeam(Int16.Parse(idJ), Int16.Parse(idE));
+        }
+        catch(Exception e)
+        {
+            IJSRuntime.InvokeVoidAsync("alert", e.Message);
+        }
         End();
     }
 

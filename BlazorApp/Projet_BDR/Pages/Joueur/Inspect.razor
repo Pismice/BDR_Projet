@@ -48,15 +48,33 @@ else
         <thead>
             <tr>
                 <th>Nombre de kill</th>
+                <th>Nombre de mort</th>
+                <th>K/D</th>
                 <th>Nombre de manche jouée</th>
                 <th>Nombre de manche gagnée</th>
+                <th>Pourcentage manche gagnée</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>@vjs.NombreKill</td>
+                <td>@vjs.NombreMort</td>
+                <td>@if (vjs.NombreMort == 0)
+                    {
+                        <span>0</span>
+                    }
+                    else
+                    {
+                        <span>@(String.Format("{0:0.##}", @vjs.NombreKill / (double)@vjs.NombreMort))</span>
+                    }</td>
                 <td>@vjs.NombreMancheJouer</td>
                 <td>@vjs.NombreMancheGagnee</td>
+                <td>
+                    @if (vjs.NombreMancheJouer != 0 && vjs.NombreMancheGagnee != 0)
+                    {
+                        @(@vjs.NombreMancheGagnee * 100 / @vjs.NombreMancheJouer)
+                    } else{<span>0</span>}%
+                </td>
             </tr>
         </tbody>
     </table>

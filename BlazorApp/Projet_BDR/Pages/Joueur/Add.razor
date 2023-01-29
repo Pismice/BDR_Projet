@@ -6,6 +6,7 @@
 @inject EquipeService EquipeService
 @inject PaysService PaysService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime IJSRuntime
 <form>
 	<div class="row">
 		<div class="col-md-8">
@@ -60,10 +61,16 @@
 
 	protected void AddJoueur()
 	{
-		joueur.IdEquipe = null;
-		JoueurService.Add(joueur);
+		try
+		{
+			joueur.IdEquipe = null;
+			JoueurService.Add(joueur);
+		}
+		catch(Exception e)
+		{
+			IJSRuntime.InvokeVoidAsync("alert", e.Message);
+		}
 		End();
-
 	}
 
 	protected void End()
