@@ -1,0 +1,42 @@
+@page "/joueur/jointeam/{idJ}/{idE}"
+@inject JoueurService JoueurService
+@inject NavigationManager NavigationManager
+@inject EquipeService EquipeService
+<PageTitle>Quitter l'équipe</PageTitle>
+<form>
+    <h3 class="control-label">Êtes-vous sûre de vouloir ajouter le joueur @joueur.Prenom @joueur.Nom de cette équipe ?
+    </h3>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Accept" value="Oui" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string idJ { get; set; }
+    [Parameter]
+    public string idE { get; set; }
+
+    Joueur joueur;
+    Equipe equipe;
+    protected override void OnInitialized()
+    {
+        joueur = JoueurService.GetById(Int16.Parse(idJ));
+        equipe = EquipeService.GetById(Int16.Parse(idE));
+    }
+    protected void Accept()
+    {
+        JoueurService.JoinTeam(Int16.Parse(idJ), Int16.Parse(idE));
+        End();
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
+    }
+}

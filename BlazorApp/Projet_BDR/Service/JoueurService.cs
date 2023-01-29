@@ -8,13 +8,18 @@ namespace Projet_BDR.Service
     public class JoueurService
     {
         private readonly ValoContext _context;
-        public JoueurService(ValoContext context) {
+        public JoueurService(ValoContext context)
+        {
             _context = context;
         }
 
         public Joueur[] GetAll()
         {
             return _context.Joueur.FromSqlRaw("SELECT * FROM joueur").ToArray();
+        }
+        public Joueur[] GetFreePlayers()
+        {
+            return _context.Joueur.FromSqlRaw("SELECT * FROM joueur WHERE idEquipe IS NULL;").ToArray();
         }
         public Joueur GetById(Int16 id)
         {
@@ -25,7 +30,7 @@ namespace Projet_BDR.Service
         public void Add(Joueur j)
         {
             FormattableString query;
-            if(j.IdEquipe == 0) 
+            if (j.IdEquipe == 0)
             {
                 query = $"INSERT INTO joueur (nom,prenom,pseudonyme,dateNaissance,salaire,idPays) VALUES ({@j.Nom},{@j.Prenom},{@j.Pseudonyme},{@j.DateNaissance},{@j.Salaire},{@j.IdPays})";
             }
@@ -33,7 +38,7 @@ namespace Projet_BDR.Service
             {
                 query = $"INSERT INTO joueur (nom,prenom,pseudonyme,dateNaissance,salaire,idPays,idEquipe) VALUES ({@j.Nom},{@j.Prenom},{@j.Pseudonyme},{@j.DateNaissance},{@j.Salaire},{@j.IdPays},{j.IdEquipe})";
             }
-             
+
             _context.Database.ExecuteSqlInterpolated(query);
         }
         public void Update(Joueur j)
@@ -41,12 +46,21 @@ namespace Projet_BDR.Service
             FormattableString query = $"UPDATE joueur SET nom = {j.Nom}, prenom = {j.Prenom}, pseudonyme = {j.Pseudonyme}, datenaissance = {j.DateNaissance}, salaire = {j.Salaire}, idpays = {j.IdPays}, idequipe = {j.IdEquipe}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
-        public void Delete(Int16 id) 
+        public void Delete(Int16 id)
         {
             FormattableString query = $"DELETE FROM joueur WHERE id = {id}";
             _context.Database.ExecuteSqlInterpolated(query);
         }
-
+        public void LeaveTeam(Int16 id)
+        {
+            FormattableString query = $"UPDATE joueur SET idequipe = NULL WHERE id = {id};";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
+        public void JoinTeam(Int16 idJ, Int16 idE)
+        {
+            FormattableString query = $"UPDATE joueur SET idequipe = {idE} WHERE id = {idJ};";
+            _context.Database.ExecuteSqlInterpolated(query);
+        }
         public VJoueurAgent[]? GetVJoueurAgent(Int16 id)
         {
             FormattableString query = $"SELECT * FROM vjoueuragent WHERE idjoueur = {id} ORDER BY nombrefoisjouer DESC, idagent ASC";
@@ -57,7 +71,7 @@ namespace Projet_BDR.Service
         {
             FormattableString query = $"SELECT * FROM vjoueurstat WHERE id = {id}";
             VJoueurStat[] vjs = _context.VJoueurStat.FromSqlInterpolated(query).ToArray();
-            if(vjs.Length == 0)
+            if (vjs.Length == 0)
             {
                 return null;
             }

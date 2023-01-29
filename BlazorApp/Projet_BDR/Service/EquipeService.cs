@@ -15,7 +15,9 @@ namespace Projet_BDR.Service
         {
             return _context.Equipe.FromSqlRaw("SELECT * FROM equipe ORDER BY id").ToArray();
         }
-
+        public Equipe[]? GetTransferable() {
+            return _context.Equipe.FromSqlRaw("select * from equipe where id not in (select idequipe from tournoi_equipe where idtournoi not in (select idtournoi from vtournoifini));").ToArray();
+        }
         public Equipe? GetById(Int16 id)
         {
             FormattableString query = $"SELECT * FROM equipe WHERE id = {@id}";

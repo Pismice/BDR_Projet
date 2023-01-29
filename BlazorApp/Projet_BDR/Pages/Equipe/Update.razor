@@ -1,6 +1,8 @@
 ﻿@page "/equipe/update/{id}"
 @inject EquipeService EquipeService
 @inject NavigationManager NavigationManager
+@inject JoueurService JoueurService
+@inject PaysService PaysService
 <PageTitle>Modification d'une équipe</PageTitle>
 <form>
     <div class="row">
@@ -33,15 +35,63 @@
         </div>
     </div>
 </form>
+<h3>Listes des joueurs
+    <a class="btn btn-primary" href="joueur/freeplayers/@equipe.Id">
+        <span class="oi oi-plus"></span>
+    </a>
+    <a class="btn btn-primary" href="joueur/stat">
+        Voir statistiques des joueurs (TODOO)
+    </a>
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Pseudonyme</th>
+            <th>Date de naissance</th>
+            <th>Salaire</th>
+            <th>Pays</th>
+            <th>Equipe</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Joueur j in joueurs)
+        {
+            <tr>
+                <td>@j.Nom</td>
+                <td>@j.Prenom</td>
+                <td>@j.Pseudonyme</td>
+                <td>@j.DateNaissance</td>
+                <td>@j.Salaire</td>
+                <td>@PaysService.GetName(j.IdPays)</td>
+                @if (j.IdEquipe == null)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@EquipeService.GetName((Int16)j.IdEquipe)</td>
+                }
+                <td>
+                    <a class="btn btn-danger" href="joueur/leaveteam/@j.Id"><span class="oi oi-delete"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 @code {
     [Parameter]
     public string id { get; set; }
     Equipe equipe = new Equipe();
+    Joueur[]? joueurs;
 
     protected override void OnInitialized()
     {
         this.equipe = EquipeService.GetById(Int16.Parse(id));
+        joueurs = EquipeService.GetJoueurs(Int16.Parse(id));
     }
     protected void UpdateEquipe()
     {
@@ -53,5 +103,6 @@
     {
         NavigationManager.NavigateTo("equipe");
     }
+
 }
 

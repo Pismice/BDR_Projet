@@ -1,0 +1,56 @@
+@page "/joueur/freeplayers/{id}"
+@inject JoueurService JoueurService
+@inject EquipeService EquipeService
+@inject PaysService PaysService
+
+<h3>Listes des joueurs sans équipe (agent libre)
+</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Pseudonyme</th>
+            <th>Date de naissance</th>
+            <th>Salaire</th>
+            <th>Pays</th>
+            <th>Equipe</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Joueur j in joueurs)
+        {
+            <tr>
+                <td>@j.Nom</td>
+                <td>@j.Prenom</td>
+                <td>@j.Pseudonyme</td>
+                <td>@j.DateNaissance</td>
+                <td>@j.Salaire</td>
+                <td>@PaysService.GetName(j.IdPays)</td>
+                @if (j.IdEquipe == null)
+                {
+                    <td></td>
+                }
+                else
+                {
+                    <td>@EquipeService.GetName((Int16)j.IdEquipe)</td>
+                }
+                <td>
+                    <a class="btn btn-light" href="joueur/@j.Id"><span class="oi oi-magnifying-glass"></span></a>
+                    <a class="btn btn-light" href="joueur/jointeam/@j.Id/@id"><span class="oi oi-plus"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    Joueur[]? joueurs;
+    [Parameter]
+    public string id { get; set; }
+    protected override void OnInitialized()
+    {
+        joueurs = JoueurService.GetFreePlayers();
+    }
+}

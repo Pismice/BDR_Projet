@@ -1,0 +1,36 @@
+@page "/joueur/leaveteam/{id}"
+@inject JoueurService JoueurService
+@inject NavigationManager NavigationManager
+<PageTitle>Quitter l'équipe</PageTitle>
+<form>
+    <h3 class="control-label">Êtes-vous sûre de vouloir supprimer le joueur @joueur.Prenom @joueur.Nom de cette équipe ?
+    </h3>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <input type="button" class="btn btn-primary" @onclick="@Accept" value="Oui" />
+                <input type="button" class="btn btn-secondary" @onclick="@End" value="Annuler" />
+            </div>
+        </div>
+    </div>
+</form>
+@code {
+    [Parameter]
+    public string id { get; set; }
+    Joueur joueur;
+    protected override void OnInitialized()
+    {
+        joueur = JoueurService.GetById(Int16.Parse(id));
+    }
+    protected void Accept()
+    {
+        JoueurService.LeaveTeam(Int16.Parse(id));
+        End();
+    }
+
+    protected void End()
+    {
+        NavigationManager.NavigateTo("equipe");
+    }
+}
