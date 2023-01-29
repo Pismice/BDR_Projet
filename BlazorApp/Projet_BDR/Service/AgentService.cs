@@ -18,5 +18,11 @@ namespace Projet_BDR.Service
             FormattableString query = $"select * from agent";
             return _context.Agent.FromSqlInterpolated(query).ToArray();
         }
+
+        public VAgentStat[]? GetVAgentStats(String option)
+        {
+            FormattableString query = $"SELECT * FROM vAgentStat ORDER BY {@option} DESC";
+            return _context.VAgentStat.FromSqlInterpolated(query).ToArray();
+        }
     }
 }
