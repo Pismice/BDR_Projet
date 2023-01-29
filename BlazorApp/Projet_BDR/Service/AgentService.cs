@@ -21,8 +21,27 @@ namespace Projet_BDR.Service
 
         public VAgentStat[]? GetVAgentStats(String option)
         {
-            FormattableString query = $"SELECT * FROM vAgentStat ORDER BY {@option} DESC";
+            FormattableString query;
+            switch (option)
+            {
+                case "Nom":
+                    query = $"SELECT * FROM vAgentStat ORDER BY nom";
+                    break;
+                case "Role":
+                    query = $"SELECT * FROM vAgentStat ORDER BY role";
+                    break;
+                case "NombreFoisJouer":
+                    query = $"SELECT * FROM vAgentStat ORDER BY nombrefoisjouer DESC";
+                    break;
+                case "NombreDeKill":
+                    query = $"SELECT * FROM vAgentStat ORDER BY nombredekill DESC";
+                    break;
+                default:
+                    query = $"SELECT * FROM vAgentStat";
+                    break;
+            }
             return _context.VAgentStat.FromSqlInterpolated(query).ToArray();
+
         }
     }
 }
