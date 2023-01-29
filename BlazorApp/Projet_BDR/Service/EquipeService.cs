@@ -13,7 +13,7 @@ namespace Projet_BDR.Service
         }
         public Equipe[]? GetAll()
         {
-            return _context.Equipe.FromSqlRaw("SELECT * FROM equipe ORDER BY id").ToArray();
+            return _context.Equipe.FromSqlRaw("SELECT * FROM equipe ORDER BY elo, id").ToArray();
         }
         public Equipe[]? GetTransferable() {
             return _context.Equipe.FromSqlRaw("select * from equipe where id not in (select idequipe from tournoi_equipe where idtournoi not in (select idtournoi from vtournoifini));").ToArray();

@@ -228,11 +228,14 @@ SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme,
 
 DROP VIEW IF EXISTS vJoueurAgent CASCADE;
 CREATE VIEW vJoueurAgent AS
-SELECT joueur.id as idJoueur, agent.id as idAgent, agent.nom agentNom, count(Joueur_Agent_Manche.noManche) nombreFoisJouer
-FROM joueur
-LEFT JOIN Joueur_Agent_Manche on joueur.id = Joueur_Agent_Manche.idJoueur
-CROSS JOIN Agent 
-GROUP BY Agent.id,Joueur.id;
+ SELECT joueur.id AS idjoueur,
+    agent.id AS idagent,
+    agent.nom AS agentnom,
+    count(joueur_agent_manche.nomanche) AS nombrefoisjouer
+   FROM joueur
+     LEFT JOIN joueur_agent_manche ON joueur.id = joueur_agent_manche.idjoueur
+     JOIN agent ON joueur_agent_manche.idagent = agent.id
+  GROUP BY agent.id, joueur.id;
 
 DROP VIEW IF EXISTS vEquipeStat CASCADE;
 CREATE VIEW vEquipeStat AS 
