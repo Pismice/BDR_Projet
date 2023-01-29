@@ -13,10 +13,10 @@ namespace Projet_BDR.Data
         public string Nom { get; set; }
 
         [Required]
-        public double CashPrize { get; set; }
+        public Int64 CashPrize { get; set; }
 
         [Required]
-        public Int16 Point { get; set; }
+        public Int64 Point { get; set; }
         [Required]
         public DateOnly DateDebut { get; set; }
         [Required]

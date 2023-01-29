@@ -243,4 +243,3 @@ INSERT INTO Joueur (nom, prenom, pseudonyme, dateNaissance, salaire, idPays, idE
 INSERT INTO Joueur (nom, prenom, pseudonyme, dateNaissance, salaire, idPays, idEquipe) VALUES('Schulze','Tommy','etiujva','1997-2-4',598,7,30);
 INSERT INTO Joueur (nom, prenom, pseudonyme, dateNaissance, salaire, idPays, idEquipe) VALUES('Sorbi','Terry','vucga','1965-12-5',1636,4,30);
 INSERT INTO Joueur (nom, prenom, pseudonyme, dateNaissance, salaire, idPays, idEquipe) VALUES('Higgins','Jonathan','moktoctek','1966-8-7',22,6,30);
-

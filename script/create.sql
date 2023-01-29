@@ -1,3 +1,4 @@
+
 DROP TYPE IF EXISTS AGENT_TYPE CASCADE;
 CREATE TYPE AGENT_TYPE AS ENUM('Controlleur','Duelliste','Initiateur','Sentinelle');
 
@@ -202,15 +203,12 @@ FROM tournoi
 inner join match on tournoi.id = match.idtournoi
 inner join vmatchfini on match.idtournoi = vmatchfini.idtournoi and match.nomatch = vmatchfini.nomatch
 where nomatchsuivant is null
-ORDER BY tournoi.id
+ORDER BY tournoi.id;
  
 
 DROP VIEW IF EXISTS vJoueurStat CASCADE;
 CREATE VIEW vJoueurStat AS 
 SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme, 
-(SELECT COUNT(idmort) from kill where idtueur = joueur.id group by idtueur) as nombreKill, 
-(SELECT COUNT(idtueur) from kill where idmort = joueur.id group by idmort) as nombreMort,
-(SELECT COUNT(*) from Joueur_Agent_Manche where idjoueur = joueur.id group by idjoueur) as nombreMancheJouer,
     COALESCE(( SELECT count(kill.idmort) AS count
            FROM kill
           WHERE kill.idtueur = joueur.id
