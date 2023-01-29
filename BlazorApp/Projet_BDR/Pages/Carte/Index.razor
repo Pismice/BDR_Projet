@@ -1,0 +1,29 @@
+﻿@page "/carte"
+@inject CarteService CarteService
+@inject NavigationManager NavigationManager
+<h3>Listes des cartes</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nom de carte</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Carte c in cartes)
+        {
+            <tr>
+                <td>@c.nom</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    Carte[]? cartes;
+    protected override void OnInitialized()
+    {
+        cartes = CarteService.GetAll();    
+    }
+}
