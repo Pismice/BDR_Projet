@@ -80,7 +80,25 @@ namespace Projet_BDR.Service
 
         public VJoueurStat[]? GetAllVJoueurStats(String filter)
         {
-            FormattableString query = $"SELECT * FROM vjoueurstat ORDER BY {filter} DESC";
+            FormattableString query;
+            switch (filter)
+            {
+                case "nombrekill":
+                    query = $"SELECT * FROM vjoueurstat ORDER BY nombrekill DESC";
+                    break;
+                case "nombremort":
+                    query = $"SELECT * FROM vjoueurstat ORDER BY nombremort DESC";
+                    break;
+                case "nombremanchejouer":
+                    query = $"SELECT * FROM vjoueurstat ORDER BY nombremanchejouer DESC";
+                    break;
+                case "nombremanchegagnee":
+                    query = $"SELECT * FROM vjoueurstat ORDER BY nombremanchegagnee DESC";
+                    break;
+                default:
+                    query = $"SELECT * FROM vjoueurstat";
+                    break;
+            }
             return _context.VJoueurStat.FromSqlInterpolated(query).ToArray();
         }
     }

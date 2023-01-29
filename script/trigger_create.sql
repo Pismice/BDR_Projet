@@ -6,7 +6,7 @@ DECLARE
 	count SMALLINT;
 	gameFormat match.gameformat%type;
 BEGIN
-	SELECT gameFormat FROM Match
+	SELECT match.gameFormat FROM Match
 	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
 	INTO gameFormat;
 	CASE 
@@ -14,13 +14,14 @@ BEGIN
 		WHEN gameFormat = 'bo3' THEN bo = 3;
 		WHEN gameFormat = 'bo5' THEN bo = 5;
 	END CASE;
-	SELECT COUNT(noManche) FROM Manche
+	SELECT COUNT(manche.noManche) FROM Manche
 	WHERE (idTournoi,noMatch) = (NEW.idTournoi, NEW.noMatch)
 	INTO count;
 	IF (count > bo) THEN 
-		ROLLBACK;
+		raise exception 'La totalité des manches de ce match on déjà été ajouté';
+		ROLLBACK;	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
@@ -30,41 +31,87 @@ AS $BODY$
 DECLARE 
 	count_carte SMALLINT;
 BEGIN 
-	SELECT count(noManche) FROM manche
+	SELECT count(manche.noManche) FROM manche
 	WHERE (idTournoi, noMatch) = (new.idTournoi, new.noMatch) AND idCarte = new.idCarte
 	INTO count_carte;
 	if(count_carte > 1) then 
-		ROLLBACK;
+		raise exception 'La carte a déjà été joué lors de ce match';
+		ROLLBACK;	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION checkMancheIsOver() RETURNS TRIGGER
-AS $BODY$
 
+
+CREATE OR REPLACE FUNCTION matchFini(idT manche.idtournoi%type ,noM manche.nomatch%type) returns void
+AS $BODY$
+DECLARE 
+	nms match.noMatchSuivant%type;
+	idVainqueur vmatchfini.idvainqueur%type;
+BEGIN 
+	SELECT match.nomatchsuivant FROM match WHERE match.idtournoi = idT and match.nomatch = noM INTO nms;
+	SELECT vmatchfini.idvainqueur from vmatchfini where vmatchfini.idtournoi = idT and vmatchfini.nomatch = noM INTO idVainqueur;
+	UPDATE match 
+	SET
+	idequipegauche =
+	CASE 
+		WHEN noM <=all(select nomatch FROM match where match.idtournoi = idT and match.nomatchsuivant = nms)
+		THEN idvainqueur
+		ELSE idequipegauche
+	END,
+	idequipedroite =
+	CASE 
+		WHEN noM >=all(select nomatch FROM match where match.idtournoi = idT and match.nomatchsuivant = nms)
+		THEN idvainqueur 
+		ELSE  idequipedroite
+	END
+	WHERE nomatch = nms;
+	raise notice 'Le match suivant à été mis à jour';
+	return;
+END;
+$BODY$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION checkCanAddManche() RETURNS TRIGGER
+AS $BODY$
 DECLARE 
 	count SMALLINT;
 BEGIN 
-	SELECT COUNT(idVainqueur) FROM vMancheFini 
-	WHERE (vMancheFini.idTournoi,vMancheFini.noMatch,vMancheFini.noManche) = (NEW.idtournoi,NEW.noMatch,NEW.noManche)
-	GROUP BY vMancheFini.idTournoi,vMancheFini.noMatch,vMancheFini.noManche
-	INTO count;
+	SELECT count(*) FROM vmatchfini
+	WHERE (vmatchfini.idtournoi,vmatchfini.nomatch) = (new.idtournoi,new.nomatch)
+	INTO count; 
 	IF(count > 0) THEN 
-		ROLLBACK;
+		raise exception 'Le match est fini, on ne peut pas ajouter de manche supplémentaire!';
+		ROLLBACK;	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION checkNeedUpdateNextMatch() RETURNS TRIGGER
+AS $BODY$
+DECLARE 
+	count SMALLINT;
+BEGIN 
+	SELECT count(*) FROM vmatchfini
+	WHERE (vmatchfini.idtournoi,vmatchfini.nomatch) = (new.idtournoi,new.nomatch)
+	INTO count;
+	IF(count > 0) THEN
+		PERFORM matchFini(new.idtournoi,new.nomatch);
+	END IF;
+	RETURN NEW;
+END;
+$BODY$ LANGUAGE plpgsql;
+
+
 -- trigger de manche
-CREATE OR REPLACE TRIGGER tgr_01_AfterInsertManche AFTER INSERT on Manche 
+CREATE OR REPLACE TRIGGER tgr_02_InsertManche BEFORE INSERT on Manche 
 FOR EACH ROW
-EXECUTE PROCEDURE checkMancheIsOver();
-CREATE OR REPLACE TRIGGER tgr_02_AfterInsertManche AFTER INSERT on Manche 
+EXECUTE PROCEDURE checkCanAddManche();
+CREATE OR REPLACE TRIGGER tgr_03_InsertManche AFTER INSERT on Manche 
 FOR EACH ROW
 EXECUTE PROCEDURE checkNumberManche();
-CREATE OR REPLACE TRIGGER tgr_03_AfterInsertManche AFTER INSERT on Manche 
+CREATE OR REPLACE TRIGGER tgr_04_InsertManche AFTER INSERT on Manche 
 FOR EACH ROW
 EXECUTE PROCEDURE checkSameCarte();
 
@@ -80,48 +127,49 @@ BEGIN
 	WHERE tournoi.id = NEW.idTournoi
 	INTO dateDebut,dateFin;
 	IF NOT (NEW.gamedate BETWEEN dateDebut and dateFin)
-		THEN ROLLBACK;
-	ELSE 
-
+		THEN raise exception 'La date du match ne se trouve pas dans les dates du tournoi';
+		ROLLBACK;
+	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION checkMatchIsOver() RETURNS TRIGGER
+--change to checkcanaddmatch utiliser tournoifini
+CREATE OR REPLACE FUNCTION checkCanAddMatch() RETURNS TRIGGER
 AS $BODY$
 
 DECLARE 
 	count SMALLINT;
 BEGIN 
-	SELECT COUNT(idVainqueur) FROM vMatchFini 
-	WHERE (vMatchFini.idTournoi,vMatchFini.noMatch) = (NEW.idtournoi,NEW.noMatch)
-	GROUP BY vMatchFini.idTournoi,vMatchFini.noMatch
+	SELECT COUNT(idTueur) FROM kill 
+	WHERE kill.idTournoi = NEW.idtournoi
+	GROUP BY kill.idTournoi
 	INTO count;
 	IF(count > 0) THEN 
-		ROLLBACK;
+		raise exception 'Le tournoi a déjà commencé on ne peut pas rajouter de match!';
+		ROLLBACK;	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 -- trigger de match
-CREATE OR REPLACE TRIGGER tgr_01_AfterInsertMatch AFTER INSERT on match
+CREATE OR REPLACE TRIGGER tgr_01_InsertMatch BEFORE INSERT on match
 FOR EACH ROW
-EXECUTE PROCEDURE checkMatchIsOver();
-CREATE OR REPLACE TRIGGER tgr_02_AfterInsertMatch AFTER INSERT on match
+EXECUTE PROCEDURE checkCanAddMatch();
+CREATE OR REPLACE TRIGGER tgr_02_InsertMatch AFTER INSERT on match
 FOR EACH ROW
 EXECUTE PROCEDURE checkMatchDate();
 
 -- fonction trigger de kill
 CREATE OR REPLACE FUNCTION checkKillSameTeam() RETURNS TRIGGER AS
 $BODY$
-
 BEGIN
 	IF((SELECT idEquipe FROM joueur where id = new.idTueur) = (SELECT idEquipe FROM Joueur WHERE id = new.idMort)) THEN 
 		raise exception 'Un joueur ne peux pas tuer un joueur de son équipe';
+		ROLLBACK;
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
@@ -137,29 +185,50 @@ BEGIN
 	INTO count; 
 	IF(count = 2) THEN 
 		raise exception 'Le joueur a deja été tué!';
+		ROLLBACK;
+	
 	END IF;
-	RETURN NULL;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION checkRoundIsOver() RETURNS TRIGGER AS 
+CREATE OR REPLACE FUNCTION checkCanAddRound() RETURNS TRIGGER AS 
 $BODY$
 DECLARE 
 	count SMALLINT;
 BEGIN 
-	SELECT COUNT(idVainqueur) FROM vRoundFini
-	WHERE (vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround) = (new.idtournoi,new.nomatch,new.nomanche,new.noround)
-	GROUP BY vRoundFini.idtournoi,vRoundFini.nomatch,vRoundFini.nomanche,vRoundFini.noround
+	SELECT count(*) FROM vMancheFini
+	WHERE (vMancheFini.idtournoi,vMancheFini.nomatch,vMancheFini.nomanche) = (new.idtournoi,new.nomatch,new.nomanche)
 	INTO count;
-	if(count > 0) THEN ROLLBACK; end if;
-	RETURN NULL;
+	IF(count > 0) THEN 
+		raise exception 'La manche est fini, on ne peut pas ajouter de round supplémentaire!';
+		ROLLBACK;	
+	END IF;
+	RETURN NEW;
+END;
+$BODY$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION checkCanAddKill() RETURNS TRIGGER AS 
+$BODY$
+DECLARE 
+	count SMALLINT;
+BEGIN 
+	SELECT count(*) from vRoundFini
+	WHERE (vRoundFini.idTournoi,vRoundFini.noMatch,vRoundFini.nomanche,vRoundFini.noround) = (new.idTournoi,new.noMatch,new.nomanche,new.noround)
+	INTO count;
+	if(count > 0) 
+	THEN
+		raise exception 'Le round est fini, on ne peut pas ajouter de kill supplémentaire!';
+		ROLLBACK;	
+	end if;
+	RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 -- trigger de kill
-CREATE OR REPLACE TRIGGER tgr_01_AfterAddKill AFTER INSERT on Kill
+CREATE OR REPLACE TRIGGER tgr_01_AfterAddKill BEFORE INSERT on Kill
 FOR EACH ROW 
-EXECUTE PROCEDURE checkRoundIsOver();
+EXECUTE PROCEDURE checkCanAddKill();
 CREATE OR REPLACE TRIGGER tgr_02_AfterAddKill AFTER INSERT on Kill
 FOR EACH ROW 
 EXECUTE PROCEDURE checkKillSameTeam();
@@ -170,9 +239,9 @@ EXECUTE PROCEDURE checkJoueurNotKilledTwice();
 --fonction trigger de round
 
 --trigger de round
-CREATE OR REPLACE TRIGGER tgr_01_AfterAddRound AFTER INSERT on round
+CREATE OR REPLACE TRIGGER tgr_01_BeforeAddRound BEFORE INSERT on round
 FOR EACH ROW
-EXECUTE PROCEDURE checkRoundIsOver();
+EXECUTE PROCEDURE checkCanAddRound();
 
 -- fonction trigger de joueur
 CREATE OR REPLACE FUNCTION checkNombreDeJoueurParEquipe() RETURNS TRIGGER
@@ -185,13 +254,14 @@ BEGIN
     GROUP BY idEquipe
     INTO count_joueur;
     IF(count_joueur > 5) 
-        THEN ROLLBACK;
-    END IF;
-    RETURN NULL;
+		THEN raise exception 'Il y a déjà 5 joueur dans cette équipe';
+        ROLLBACK;    
+	END IF;
+    RETURN NEW;
 END;
 $BODY$ LANGUAGE plpgsql;
 
 -- trigger de joueur
-CREATE OR REPLACE TRIGGER tgr_01_AfterAddUpdateJoueur AFTER INSERT OR UPDATE on joueur
+CREATE OR REPLACE TRIGGER tgr_01_AfterAddUpdateJoueur BEFORE INSERT OR UPDATE on joueur
 FOR EACH ROW
 EXECUTE PROCEDURE checkNombreDeJoueurParEquipe();

@@ -7,7 +7,7 @@ namespace Projet_BDR.Context
     public class ValoContext : DbContext
     {
         public ValoContext(DbContextOptions options) : base(options) { }
-        public DbSet<Agent> Agents { get; set; }
+        public DbSet<Agent> Agent { get; set; }
         public DbSet<Arme> Arme { get; set; }
         public DbSet<Carte> Carte { get; set; }
         public DbSet<Equipe> Equipe { get; set; }
@@ -28,6 +28,7 @@ namespace Projet_BDR.Context
         public DbSet<VRoundFini> VRoundFini{ get; set; }        
         public DbSet<VMatchFini> VMatchFini { get; set; }
         public DbSet<VTournoiMatch> VTournoiMatch { get; set; }
+        public DbSet<VTournoiFini> VTournoiFini { get; set; }
         public DbSet<DbInt> Int { get; set; }
 
         static ValoContext()  

@@ -1,0 +1,64 @@
+﻿@page "/agent"
+@inject AgentService AgentService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Agent</PageTitle>
+<form>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="col-md-8">
+                <label for="Option" class="control-label">Option</label>
+                <select form="Option" class="form-control" @onclick="@ClassementAgent" id="option" name="option" @bind="@option">
+                    <option value="Nom">Nom</option>
+                    <option value="NombreDeKill">Nombre de kill</option>
+                    <option value="NombreFoisJouer">Nombre de fois jouer</option>
+                    <option value="Role">Role</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <br />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nom</th>
+                <th>Role</th>
+                <th>Nombre de Kills</th>
+                <th>Nombre de match jouer</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VAgentStat a in agents)
+            {
+                <tr>
+                    <td>@(++no)</td>
+                    <td>@a.Nom</td>
+                    <td>@a.Role</td>
+                    <td>@a.NombreDeKill</td>
+                    <td>@a.NombreFoisJouer</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+<br />
+
+@code {
+    int no;
+    String option = "Nom";
+    VAgentStat[]? agents;
+
+    protected override void OnInitialized()
+    {
+        ClassementAgent();
+    }
+
+    protected void ClassementAgent()
+    {
+        no = 0;
+        agents = AgentService.GetVAgentStats(option);
+    }
+}
+

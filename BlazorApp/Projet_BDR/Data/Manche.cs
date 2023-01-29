@@ -15,6 +15,6 @@ namespace Projet_BDR.Data
         public Int16 NoManche { get; set; }
 
         [ForeignKey("Carte")]
-        public Int16 NoCarte { get; set; }
+        public Int16 IdCarte { get; set; }
     }
 }

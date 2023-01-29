@@ -62,8 +62,8 @@ DROP TABLE IF EXISTS Tournoi CASCADE;
 CREATE TABLE Tournoi(
 	id SMALLSERIAL,
 	nom NAME_FORMAT,
-	cashprize SMALLINT,
-	point SMALLINT,
+	cashprize bigint,
+	point bigint,
 	dateDebut DATE,
 	dateFin DATE,
 	CONSTRAINT PK_Tournoi PRIMARY KEY (id),
@@ -150,7 +150,7 @@ CREATE TABLE Joueur_Agent_Manche(
 	CONSTRAINT FK_Joueur_Agent_Manche_idJoueur FOREIGN KEY (idJoueur) REFERENCES Joueur(id) ON DELETE CASCADE,
 	CONSTRAINT FK_Joueur_Agent_Manche_idAgent FOREIGN KEY (idAgent) REFERENCES Agent(id) ON DELETE CASCADE,
 	CONSTRAINT FK_Joueur_Agent_Manche_noManche FOREIGN KEY (idTournoi,noMatch,noManche) REFERENCES Manche(idTournoi,noMatch,noManche) ON DELETE CASCADE,
-	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche,idAgent)
+	CONSTRAINT PK_Joueur_Agent_Manche PRIMARY KEY (idJoueur,idTournoi,noMatch,noManche)
 );
 --Vue
 DROP VIEW IF EXISTS vEquipeActive CASCADE;
@@ -196,18 +196,38 @@ END
 ORDER BY match.idTournoi, match.noMatch;
 
 DROP VIEW IF EXISTS vTournoiFini CASCADE;
+CREATE VIEW vTournoiFini AS
+SELECT tournoi.id, vMatchFini.idVainqueur idVainqueur
+FROM tournoi
+inner join match on tournoi.id = match.idtournoi
+inner join vmatchfini on match.idtournoi = vmatchfini.idtournoi and match.nomatch = vmatchfini.nomatch
+where nomatchsuivant is null
+ORDER BY tournoi.id
+ 
 
 DROP VIEW IF EXISTS vJoueurStat CASCADE;
 CREATE VIEW vJoueurStat AS 
 SELECT joueur.id,joueur.nom,joueur.prenom,joueur.pseudonyme, 
-COALESCE(sum(case when Kill.idTueur = joueur.id then 1 end),0) as nombreKill, 
-COALESCE(sum(case when Joueur_Agent_Manche.idJoueur = joueur.id then 1 end),0) as nombreMancheJouer,
-COALESCE(sum(case when vMancheFini.idVainqueur = joueur.idEquipe then 1 end),0) as nombreMancheGagnee
-FROM joueur
-LEFT JOIN Kill on joueur.id = kill.idTueur
-LEFT JOIN Joueur_Agent_Manche on Joueur_Agent_Manche.idJoueur = joueur.id
-LEFT JOIN vMancheFini on joueur.idEquipe = vMancheFini.idVainqueur
-GROUP BY joueur.id;
+(SELECT COUNT(idmort) from kill where idtueur = joueur.id group by idtueur) as nombreKill, 
+(SELECT COUNT(idtueur) from kill where idmort = joueur.id group by idmort) as nombreMort,
+(SELECT COUNT(*) from Joueur_Agent_Manche where idjoueur = joueur.id group by idjoueur) as nombreMancheJouer,
+    COALESCE(( SELECT count(kill.idmort) AS count
+           FROM kill
+          WHERE kill.idtueur = joueur.id
+          GROUP BY kill.idtueur), 0::bigint) AS nombrekill,
+    COALESCE(( SELECT count(kill.idtueur) AS count
+           FROM kill
+          WHERE kill.idmort = joueur.id
+          GROUP BY kill.idmort), 0::bigint) AS nombremort,
+    COALESCE(( SELECT count(*) AS count
+           FROM joueur_agent_manche
+          WHERE joueur_agent_manche.idjoueur = joueur.id
+          GROUP BY joueur_agent_manche.idjoueur), 0::bigint) AS nombremanchejouer,
+    COALESCE(( SELECT count(*) AS count
+           FROM vmanchefini
+          WHERE vmanchefini.idvainqueur = joueur.idequipe
+          GROUP BY vmanchefini.idvainqueur), 0::bigint) AS nombremanchegagnee
+   FROM joueur;
 
 DROP VIEW IF EXISTS vJoueurAgent CASCADE;
 CREATE VIEW vJoueurAgent AS
